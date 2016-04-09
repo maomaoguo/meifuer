@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<title>用户列表</title>
+</head>
+
+<body>
+	<div class="col-md-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">用户列表</div>
+			<div class="panel-body">
+				<form id="q-form">
+					<div class="btn-group">
+						<input type="text" placeholder="姓名" class="form-control input-sm" id="q-name">
+					</div>
+					<div class="btn-group">
+						<input type="text" placeholder="注册时间" class="form-control input-sm" id="q-min-cTime">
+					</div>
+					-
+					<div class="btn-group">
+						<input type="text" placeholder="注册时间" class="form-control input-sm" id="q-max-cTime">
+					</div>
+					<div class="btn-group">
+						<button type="button" class="btn btn-info input-sm" onclick="initTable()"><span class="glyphicon glyphicon-search"></span>&nbsp;查询</button>
+					</div>
+					<div class="btn-group">
+						<button type="button" class="btn btn-primary input-sm" onclick="resetForm()"><span class="glyphicon glyphicon-repeat"></span>&nbsp;重置</button>
+					</div>
+				</form>
+				<button type="button" class="btn btn-success input-sm" onclick="addUser();" style="margin: 10px 0;"><span class="glyphicon glyphicon-plus"></span>&nbsp;新增</button>
+				
+				<div class="table-responsive">
+					<table id="users-table" class="table table-striped table-hover">
+						<thead class="the-box dark full">
+							<tr>
+								<th style="width: 15%">姓名</th>
+								<th style="width: 20%; text-align: center;">说明</th>
+								<th style="width: 20%; text-align: center;">注册时间</th>
+								<th style="width: 10%; text-align: center;">操作</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 用户model start -->
+	<div class="modal fade" id="user-modal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog" style="width: 500px;">
+			<div class="modal-content">
+				<form id="user-form" method="post" action="api/users" class="form-horizontal">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h4 class="modal-title" id="user-modal-title">新增用户</h4>
+					</div>
+					
+					<div class="modal-body clearfix">
+						<div class="form-group">
+							<label class="col-lg-3 control-label" for="name">&nbsp;姓名： </label>
+							<div class="col-lg-8">
+								<input type="text" id="name" name="name" class="form-control input-sm" placeholder="姓名">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-3 control-label" for="desc">&nbsp;说明： </label>
+							<div class="col-lg-8">
+								<input type="text" id="desc" name="desc" class="form-control input-sm" placeholder="说明">
+							</div>
+						</div>
+					</div>
+					
+					<div class="modal-footer">
+						<button type="button" class="btn btn-sm btn-primary" onclick="saveUser()">保存</button>
+						<button type="button" class="btn btn-sm btn-default" data-dismiss="modal">取消</button>
+					</div><!-- /.modal-footer -->
+				</form>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-doalog -->
+	</div>
+	<!-- 用户model end -->
+	
+	<script type="text/javascript">
+	
+	// 初始化table
+	function initTable() {
+		
+		// table摧毁
+		$('#users-table').dataTable().fnDestroy();
+
+		// 初始化
+		$('#users-table').dataTable({
+			// 是否显示查询进度
+			'bProcessing': false,
+			// 指定从服务器端获取数据 
+			'bServerSide': true, 
+			// 获取路径
+			'sAjaxSource': 'api/users',
+			// 与后台交互获取数据的处理函数 
+			'fnServerData': retrieveData, 
+			// 将之前的那个数据对象清除掉，换以新的对象设置
+			'bDestroy': true, 
+			// 用于指明当执行dataTable绑定时，是否返回DataTable对象
+			'bRetrieve': true, 
+			// 加载的数据列表的名称
+			'sAjaxDataProp': 'data',
+			// 一个显示多少行
+			'iDisplayLength': 10,
+			// 是否显示过滤条件
+			'bFilter': false,
+			// 是否显示显示多少行的选择框
+			'bLengthChange': false,
+			// 列的宽度是否自适应
+			'bAutoWidth': false,
+			// 是否排序
+			'bSort': false,
+			// 数据展示
+			'aoColumns': [{
+				'mData': 'name', // 源数据
+				'fnCreatedCell': function(nTd) { // 显示样式修改
+					$(nTd).css('padding-left', '18px');
+				}
+			}, {
+                'mData': 'desc',
+                'fnCreatedCell': function(nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
+            }, {
+				'mData': 'creatdate',
+				'mRender': cTimeRender, // 渲染源数据
+				'fnCreatedCell': function(nTd) {
+					$(nTd).css('text-align', 'center');
+				}
+			}, {
+				'mData': 'id',
+				'mRender': descRender,
+				'fnCreatedCell': function(nTd) {
+					$(nTd).css('text-align', 'center');
+				}
+			}],
+			// 汉化语言
+			'oLanguage': {
+				'sUrl': 'conf/de_DE.txt'
+			}
+		});
+	}
+	
+	// 时间对象的格式化
+	Date.prototype.format = function(format) {
+		var o = {
+			'M+': this.getMonth() + 1, // month
+			'd+': this.getDate(), // day
+			'h+': this.getHours(), // hour
+			'm+': this.getMinutes(), // minute
+			's+': this.getSeconds(), // second
+			'q+': Math.floor((this.getMonth() + 3) / 3), // quarter
+			'S': this.getMilliseconds() // millisecond
+		};
+		if (/(y+)/.test(format)) {
+			format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+		}
+		for (var k in o)
+			if (new RegExp('(' + k + ')').test(format)) {
+				format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+			}
+		return format;
+	};
+	
+	// 渲染注册时间列
+	function cTimeRender(data, type, row) {
+		return new Date(parseInt(data)).format('yyyy-MM-dd hh:mm:ss');
+	}
+
+	// 渲染操作列
+	function descRender(data, type, row) {
+		return '<a id="'
+				+ data
+				+ '" onclick="editUser(this)" align="center" href="javascript:;" data-toggle="tooltip" title="编辑"><span class="glyphicon glyphicon-edit icon-warning"></span></a>&nbsp;&nbsp;'
+				+ '<a id="'
+				+ data
+				+ '" onclick="delUser(this)" align="center" href="javascript:;" data-toggle="tooltip" title="刪除"><span class="glyphicon glyphicon-trash icon-danger"></span></a>';
+	}
+	
+	// 异步获取table数据
+	function retrieveData(sSource, aoData, fnCallback) {
+		var row = 10; //默认一次加载10条
+		var start = 1; //从第几条开始
+		
+		// 获取行数及开始条数
+		// eval()转换为json对象
+		$.each(eval(aoData), function(i, field) {
+			if (field.name == 'iDisplayStart') {
+				start = field.value;
+			}
+			if (field.name == 'iDisplayLength') {
+				row = field.value;
+			}
+		});
+		var name = $('#q-name').val();
+		var minCTime = $('#q-min-cTime').val();
+		var maxCTime = $('#q-max-cTime').val();
+		
+		// 请求后台获取数据，$.getJSON()与$.get()区别是$.getJSON()会将获取到的数据转为json格式，而$.get()获取到的数据可以是任意数据（txt，jsp等文档）
+		$.getJSON(sSource, {
+			start: start,
+			row: row,
+			name: name,
+			minctime: minCTime,
+			maxctime: maxCTime
+		}, function(rm) {
+			if (1 === rm.code) {
+				var data = {};
+                data = rm.result;
+                data.iTotalRecords = rm.result.total;
+                data.iTotalDisplayRecords = rm.result.total;
+						
+				// fnCallback是dataTable的数据渲染方法；
+				// $.parseJSON()将字符串转为json
+				fnCallback(data);
+			} else {
+				jAlert(rm.msg, '提示');
+			}
+		});
+	}
+	
+	// 重置按钮点击事件
+	function resetForm() {
+		$('#q-form')[0].reset();
+		$('#q-status').selectpicker('val', '');
+	}
+	
+	// 新增按钮点击事件
+	function addUser() {
+		
+		// 重置form表单
+		$('#user-form')[0].reset();
+		$('#login').attr('readonly', false);
+		
+		// 修改弹窗标题
+		$('#user-modal-title').text('新增用户');
+		
+		// 改变form提交路径
+		$('#user-form').attr('action', 'api/users');
+        $('#user-form').attr('method', 'POST');
+		
+		// 弹出框
+		$('#user-modal').modal({backdrop: 'static'});
+		$('#user-modal').modal('show');
+	}
+	
+	// 保存用户
+	function saveUser() {
+		
+		// 获取数据
+		var name = $('#name').val();
+		var desc = $('#desc').val();
+		
+		// 输入校验
+		if (!name) {
+			jAlert('请输入姓名！', '提示');
+			return;
+		}
+		
+		// 提交路径是$('#user-form').attr('action')
+		// 提交数据是通过$('#user-form').serialize()进行数据序列化
+		$.ajax({
+                    type:$('#user-form').attr('method'),
+                    url: $('#user-form').attr('action'),
+                    data: $('#user-form').serialize(),
+                    success: function (rm) {
+                        if (1 === rm.code) {
+                            jAlert('保存成功', '提示');
+                            $('#user-modal').modal('hide');
+                            initTable();
+                        } else {
+                            jAlert(rm.msg, '提示');
+                        }
+                    }
+                }
+        );
+	}
+	
+	// 编辑用户
+	function editUser(v) {
+		
+		// 获取id
+        var id = $(v).attr('id');
+        var dt = $('#users-table').DataTable();
+        var data = dt.row($(v).closest('tr')).data();
+		
+		// 重置form表单
+		$('#user-form')[0].reset();
+		$('#login').attr('readonly', true);
+		
+		// 修改弹出框标题
+		$('#user-modal-title').text('编辑用户');
+		
+		// 弹出框显示
+		$('#user-modal').modal({backdrop: 'static'});
+		$('#user-modal').modal('show');
+		
+		// 修改form表单的action即提交的url
+		$('#user-form').attr('action', 'api/users/'+ id);
+        $('#user-form').attr('method', 'PUT');
+
+        $('#name').val(data.name);
+        $('#desc').val(data.desc);
+	}
+	
+	// 删除用户
+	function delUser(v) {
+		var id = $(v).attr('id');
+		
+		// 提示
+		jConfirm('您确定要删除该用户吗？', '提示', function(r) {
+			if (r) {
+				
+				// 请求后台
+				$.ajax({
+					type: 'DELETE',
+					url: 'api/users/' + id,
+					dataType: 'json',
+					success: function(rm) {
+						jAlert(rm.msg, '提示');
+						if (1 === rm.code) {
+							
+							// 重新加载table
+							initTable();
+						}
+					}
+				});
+		 	}
+		 });
+	}
+	
+	// 页面加载完成后执行
+	$(function() {
+		
+		// 初始化时间控件
+	    var checkin = $('#q-min-cTime').datepicker({
+	    	format: 'yyyy-mm-dd',
+	    	onRender: function(date) {
+				return date > new Date() ? 'disabled' : '';
+			}
+	    }).on('changeDate', function(ev) {
+	    	if (ev.date.valueOf() > checkout.date.valueOf()) {
+	    		var newDate = new Date(ev.date);
+	    		newDate.setDate(newDate.getDate() + 1);
+	    		checkout.setValue(newDate);
+	    	}
+	    	checkin.hide();
+	    	checkout.update();
+	    	$('#q-max-cTime')[0].focus();
+	    }).data('datepicker');
+	    var checkout = $('#q-max-cTime').datepicker({
+	    	format: 'yyyy-mm-dd',
+	    	onRender: function(date) {
+	    		return date.valueOf() < checkin.date.valueOf() || date > new Date() ? 'disabled' : '';
+	    	}
+	    }).on('changeDate', function(ev) {
+	    	checkout.hide();
+	    }).data('datepicker');
+	    
+	    // 初始化下拉列表
+		$('.selectpicker').selectpicker();
+	    
+	    // 初始化表格数据
+		initTable();
+	});
+	</script>
+</body>
+</html>

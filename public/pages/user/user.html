@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	 <meta charset="utf-8">
+	<title>会员管理</title>
+	<style>
+	.datepicker{
+		z-index:1041;
+	}
+	</style>
+	</head>
+ 	 <body>
+          <section class="wrapper">
+              <div class="mail-box">
+                      <div class="inbox-head">
+                          <h3>会员管理</h3>
+                          <form class="pull-right position" >
+                              <div class="input-append">
+                                  <input type="text"  placeholder="会员查询" class="sr-input" id="tel" name="tel">
+                                  <button type="button" class="btn sr-btn" onclick="telSearch()"><i  class="icon-search"></i></button>
+                              </div>
+                          </form>
+                      </div>
+                      
+                      <div class="inbox-body">
+	                      <div class="mail-option">
+	                          <div class="btn-group" >
+	                              <button type="button" class="btn btn-sm btn-primary" onclick="userAdd();">
+										<i class="icon-plus"></i> 新增
+								  </button>
+	                          </div>
+	                     </div>
+	                     <table id="userTable" class="table table-inbox table-hover">
+	                       <thead class="the-box dark full">
+							<tr>
+								<th style = "width:10% ">姓名</th>
+								<th width="10%">类型</th>
+								<th width="10%">性别</th>
+								<th width="10%">联系方式</th>
+								<th width="10%">QQ</th>
+								<th width="10%">操作</th>
+							</tr>
+							</thead>
+	                     </table>
+                  </div>
+              </div>
+          </section>
+  </body>
+ 		 <!-----------新增会员Modal------------->
+          <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" id="userModal" class="modal fade">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+					<form class="form-horizontal">
+                      <div class="modal-header">
+                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                          <h4 class="modal-title" id="titleModal"></h4>
+                      </div>
+                     <div class="modal-body the-box no-border clearfix" style="padding-left: 50px; padding-right: 50px;">
+						<input name="uid" id="uid" type="hidden" /> 
+							<div class="form-group">
+									<label class="col-lg-3 control-label" for ="telphone" >手机号码：</label>
+									<div class="col-lg-9">
+										<input class="form-control input-sm" placeholder="手机号码" id="telphone" name="telphone" tabindex="1" maxlength="11"/>
+									</div>
+							</div>
+							<div class="form-group">
+								<label class="col-lg-3 control-label" for ="userName">姓  名：</label>
+								<div class="col-lg-9">
+									<input class="form-control input-sm" placeholder="姓名" id="userName" name="userName"  tabindex="2" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-lg-3 control-label" for= "sex">性  别：</label>
+								<div class="col-lg-9">
+									<select data-placeholder="请选择性别" name="sex" id="sex" class="form-control chosen-select input-sm" tabindex="3">
+										<option value=""></option>
+										<option value="1"> 男 </option>
+										<option value="2"> 女 </option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-lg-3 control-label" for= "type">类  型：</label>
+									<div class="col-lg-9">
+										<select data-placeholder="请选择类型" name="type" id="type" class="form-control chosen-select input-sm" tabindex="4">
+											<option value=""></option>
+											<option value="2">普通会员(VIP)</option>
+											<option value="3">尊贵会员(VVIP)</option>
+										</select>
+									</div>
+							</div>
+							<div class="form-group">
+				                 <label for="endDate" class="col-lg-3 control-label">日  期：</label>
+                                  <div class="col-lg-9">
+                                      <input class="form-control input-sm "  size="16" type="text" value="" id="endDate" name="endDate" tabindex="5"/>
+                                  </div>
+				            </div>
+							<div class="form-group">
+								<label class="col-lg-3 control-label" for= "qq">Q Q：</label>
+								<div class="col-lg-9">
+									<input class="form-control input-sm" placeholder="QQ" id="qq" name="qq" tabindex="6" maxlength="12"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-lg-3 control-label" for="address" >住  址：</label>
+								<div class="col-lg-9">
+									<input class="form-control input-sm" placeholder="住址" id="address" name="address" tabindex="7" maxlength="255"/>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-lg-3 control-label" for= "email">邮  箱：</label>
+								<div class="col-lg-9">
+									<input class="form-control input-sm" placeholder="邮箱" id="email" name="email" tabindex="8" />
+								</div>
+							</div>
+							<div class="form-group">
+									<label class="col-lg-3 control-label" for= "note">备  注：</label>
+									<div class="col-lg-9 controls">
+										<textarea class="form-control input-sm" placeholder="备注" id="note" name="note" tabindex="9" row ="5" maxlength=""></textarea>
+									</div>
+							</div>
+					</div>
+                    <div class="modal-footer">
+                        <button id="admin_button1" class="btn btn-success" type="button" onclick="userSave()">确定</button>
+                        <button id="admin_button2" data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
+                   </div>
+					</form>
+				</div>
+                  </div>
+              </div>
+  <script>
+  	$(document).ready(function() {
+  		initUserTable();
+  		$('#endDate').datepicker({
+            format: 'mm-dd-yyyy'
+        });
+
+	});
+	//========= 一、会员列表 ============
+  function initUserTable() {
+			var table_option = {
+				"bProcessing" : false,
+				"bServerSide": true, //指定从服务器端获取数据 
+				"sAjaxSource" : 'api/users',
+				"fnServerData" : retrieveData, //与后台交互获取数据的处理函数 
+				"bDestroy" : true, //将之前的那个数据对象清除掉，换以新的对象设置
+				"bRetrieve" : true, //用于指明当执行dataTable绑定时，是否返回DataTable对象
+				"sAjaxDataProp" : "data",
+				"iDisplayLength" : 10,//每页显示行数
+				"bFilter" : false,
+				"bLengthChange" : false,
+				"bAutoWidth" : false,
+				"bSort" : false,
+				"aoColumns" : 
+					[{
+						"mData" : "name",
+					},{
+						"mData" : "type",
+						mRender : function(data, type, row) {
+							if (data == 2) {
+								return "普通会员";
+							}else if (data == 3) {
+								return "尊贵会员";
+							}else{
+								return "--";
+							}
+						},
+					},{
+						"mData" : "sex",
+						mRender : function(data, type, row) {
+							if (data == 1) {
+								return "男";
+							}else if (data == 2) {
+								return "女";
+							}else{
+								return "--";
+							}
+						},
+					},{
+						"mData" : "tel",
+					},{
+						"mData" : "qq",
+					},{
+						"mData" : "uid",
+						mRender : descRender,
+					}],
+				"oLanguage" : {
+					"sUrl" : "conf/de_DE.txt"
+				}
+			};
+			$("#userTable").dataTable().fnDestroy();
+			$("#userTable").dataTable(table_option);
+		}
+		
+		//与后台交互获取数据的处理函数 
+		function retrieveData(sSource, aoData, fnCallback) {
+			var rows;//默认一次加载10条.
+			var start;//从第几条开始
+			var tel = $('#tel').val();
+			$.each(eval(aoData), function(i, field) {//转换为json对象
+				if (field.name == "iDisplayStart") {
+					start = field.value;
+				}
+				if (field.name == "iDisplayLength") {
+					rows = field.value;
+				}
+			});
+			$.getJSON(sSource, {start:start,pagesize:rows,tel:tel}, function(msg) {
+				var json = JSON.stringify(msg.result);
+				var str = json.substring(0,json.length-1)+',"iTotalRecords":"'+msg.result.total+'","iTotalDisplayRecords":"'+msg.result.total+'"}';
+				fnCallback($.parseJSON(str));
+			});
+		}
+		
+		// 操作列渲染
+		function descRender(data, type, row) {
+				return	'<a data-toggle="tooltip" href="javascript: void(0);" onclick="userShow(' + row.uid + ')" title="查看" class="btn btn-xs btn-success"><i class="icon-file-text"></i></a>&nbsp;'
+				 		+ '<a class="btn btn-xs btn-info" href="javascript: void(0);" onclick="userEdit(' + row.uid + ')" data-toggle="tooltip" title="编辑"><i class="icon-edit"></i></a>&nbsp;'
+						+ '<a class="btn btn-xs btn-danger" href="javascript: void(0);" onclick="userDel(' + row.uid + ')" data-toggle="tooltip" title="删除"><i <i class="icon-remove"></i></a>&nbsp;'
+		}
+		//条件查询
+		function telSearch() {
+			initUserTable();
+		}
+		
+		//弹出新增会员弹出框
+		function userAdd() {
+			userEmpty();
+			$('#titleModal').text('新增会员');
+			$('#userModal').modal({backdrop:'static'});
+			$('#userModal').modal('show');
+		}
+		
+		//弹出查看会员弹出框
+		 function userShow(uid) {
+			userEmpty();
+			$('#titleModal').text('查看会员');
+			$('#userModal').modal({backdrop:'static'});
+			$('#userModal').modal('show');
+			$.ajax({
+				type : 'GET',//提交方式
+				url : 'api/users/' +uid,
+				data : {},
+				success : function(msg) {
+					if (msg.code == 1) {
+						$('#login').val(msg.result.login);
+						$('#telphone').val(msg.result.tel);
+						$('#userName').val(msg.result.name);
+						$('#sex').val(msg.result.sex);
+						$('#type').val(msg.result.type);
+						$('#qq').val(msg.result.qq);
+						$('#address').val(msg.result.address);
+						$('#email').val(msg.result.email);
+						$('#note').val(msg.result.note);
+						$('#endDate').val( new Date(msg.result.endtime).format("yyyy-MM-dd"));
+						$('#uid').val(uid);
+					}
+				}
+			});
+		}
+		
+		//弹出编辑会员弹出框
+		function userEdit(uid) {
+			userEmpty();
+			$('#titleModal').text('编辑会员');
+			$('#userModal').modal({backdrop:'static'});
+			$('#userModal').modal('show');
+			$.ajax({
+				type : 'GET',//提交方式
+				url : 'api/users/' +uid,
+				data : {},
+				success : function(msg) {
+					if (msg.code == 1) {
+						$('#login').val(msg.result.login);
+						$('#telphone').val(msg.result.tel);
+						$('#userName').val(msg.result.name);
+						$('#sex').val(msg.result.sex);
+						$('#qq').val(msg.result.qq);
+						$('#address').val(msg.result.address);
+						$('#email').val(msg.result.email);
+						$('#note').val(msg.result.note);
+						$('#type').val(msg.result.type);
+						$('#endDate').val( new Date(msg.result.endtime).format("yyyy-MM-dd"));
+						$('#uid').val(uid);
+					}
+				}
+			});
+		} 
+		
+		//清空内容
+		function userEmpty() {
+			$('#type').val('');
+			$('#endDate').val('');
+			$('#login').val('');
+			$('#telphone').val('');
+			$('#userName').val('');
+			$('#sex').val('');
+			$('#qq').val('');
+			$('#address').val('');
+			$('#email').val('');
+			$('#note').val('');
+		}
+		
+		//会员新增
+		function userSave() {
+			var telphone =  $('#telphone').val();
+			var userName = $('#userName').val();
+			var type= $('#type').val();
+			var endDate = $('#endDate').val();
+			var sex = $('#sex').val();
+			var qq = $('#qq').val();
+			var address = $('#address').val();
+			var email = $('#email').val();
+			var note = $('#note').val(); 
+			var uid = $('#uid').val();
+			var url = "";
+			if(isempty(uid)){
+				url ="api/users/add";
+			}else{
+				url ="api/users/"+ uid;
+			}
+			$.ajax({
+				type : "POST",
+				 url : url,
+				data : {
+					login: telphone,
+					telphone: telphone,
+					userName: userName,
+					sex: sex,
+					qq: qq,
+					address: address,
+					email: email,
+					note: note,
+					type: type,
+					endDate : endDate
+				},success : function(msg) {
+					if (msg.code == 1) {
+						yeshidenotify('success', 'top right', msg.msg, "提示将在3秒内关闭",3000);
+						$('#userModal').modal('hide');
+						initUserTable();
+					} else {
+						yeshidenotify('error', 'top right', msg.msg, "提示将在3秒内关闭",3000);
+					}
+				}
+			}); 
+		}
+		
+		//会员删除
+		function userDel(uid) {
+			$.ajax({
+				type : "DELETE",
+				 url : "api/users/" + uid,
+				data : {},
+				success : function(msg) {
+					if (msg.code == 1) {
+						yeshidenotify('success', 'top right', msg.msg, "提示将在3秒内关闭",3000);
+						initUserTable();
+					} else {
+						yeshidenotify('error', 'top right', msg.msg, "提示将在3秒内关闭",3000);
+					}
+				}
+			}); 
+		}
+  </script>
+</html>

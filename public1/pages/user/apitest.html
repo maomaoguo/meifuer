@@ -1,0 +1,35 @@
+<!-- 右上侧请求信息 -->
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">Request</div>
+        <div class="panel-body">
+            <div class="col-md-8">
+                <input placeholder="请求url" readonly="readonly" id="url"
+                       width="300px" class="index-input">
+            </div>
+            <div class="col-md-4">
+                <input placeholder="请求方式" readonly="readonly" id="method" class="index-input">
+            </div>
+            <div class="col-md-12">
+                <div class="bs-example "></div>
+            </div>
+
+            <div class="col-md-12">
+                <button class="btn btn-primary" onclick="sendRequest();">Send</button>
+                <button class="btn btn-danger" onclick="resetFormData();">Reset</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 右下侧返回数据显示 -->
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">Response</div>
+        <div class="panel-body">
+            <textarea rows="15" id="response"
+                      style="width: 100%;border: none"></textarea>
+        </div>
+    </div>
+</div>

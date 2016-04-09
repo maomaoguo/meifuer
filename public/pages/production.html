@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+	<section class="wrapper">
+		<!-- page start-->
+        <section class="panel">
+            <header class="panel-heading">
+            	<ul class="breadcrumb" style="margin: 0;padding: 0">
+                    <li><a href="javascript:;" style="cursor: default;"><i class="icon-heart"></i>尊贵会员</a></li>
+                    <li>男装</li>
+                </ul>
+            </header>
+            <div class="panel-body">
+            	<div class="row product-list">
+                    <div class="col-md-3">
+                        <section class="panel">
+                            <div class="pro-img-box">
+                                <img alt="" src="img/product-list/pro-1.jpg">
+                                <a class="adtocart" href="javascript:;" onclick="info();"> <i class="icon-picture"></i></a>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- page end-->
+    </section>
+</body>
+<script type="text/javascript">
+	$(function() {
+		//    fancybox
+		//jQuery(".fancybox").fancybox();
+		
+	});
+		
+	function info(){
+		$.fancybox.open([
+				        	{href : 'img/gallery/1.jpg'},
+				        	{href : 'img/gallery/2.jpg'},
+				        	{href : 'img/gallery/3.jpg'},
+				        	{href : 'img/gallery/4.jpg'},
+				        	{href : 'img/gallery/5.jpg'}
+				        ],{
+				    		prevEffect	: 'none',
+				    		nextEffect	: 'none',
+				    		helpers	: {
+				    			thumbs	: {
+				    				width	: 50,
+				    				height	: 50,/* 
+				    				source : function( item ) {
+				                        return item.href;
+				                    }, */
+					    			position: 'bottom'
+				    			}
+				    		}
+				    	});
+	}
+</script>
+</html>

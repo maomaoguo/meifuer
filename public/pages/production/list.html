@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8">
+		<title>作品管理--作品维护</title>
+	</head>
+
+	<body>
+		<script type="text/x-jquery-tmpl" id="product-template">
+			<div class="col-md-3">
+				<section class="panel" style="background-color: #f1f2f7">
+					<div class="pro-img-box">
+						<img src="img/product-list/pro-1.jpg"/>
+					</div>
+					<div class="panel-body text-center">
+						<button id="{{= pid}}" class="btn btn-sm btn-info" type="button" onclick="show(this);">
+							<i class="icon-list-ul"></i> 查看
+						</button>
+						<button id="{{= pid}}" class="btn btn-sm btn-warning" type="button" onclick="edit(this);">
+							<i class="icon-pencil"></i> 编辑
+						</button>
+						<button id="{{= pid}}" class="btn btn-sm btn-danger" type="button" onclick="del(this);">
+							<i class="icon-trash"></i> 删除
+						</button>
+					</div>
+				</section>
+			</div>
+		</script>
+	
+		<section class="wrapper">
+			<div class="row">
+				<div class="col-md-12">
+					<section class="panel">
+						<header class="panel-heading tab-bg-dark-navy-blue">
+							<ul class="nav nav-tabs">
+								<li class="active">
+									<a id="boy" href="#" data-toggle="tab">男装</a>
+								</li>
+								<li class="">
+									<a id="girl" href="#" data-toggle="tab">女装</a>
+								</li>
+								<li class="">
+									<a id="tatoon" href="#" data-toggle="tab">图案</a>
+								</li>
+								<li class="">
+									<a id="vip" href="#" data-toggle="tab">会员尊享</a>
+								</li>
+								<li class="">
+									<a id="others" href="#" data-toggle="tab">其他</a>
+								</li>
+							</ul>
+						</header>
+                    	<div class="panel-body">
+							<div id="product-list" class="row product-list"></div>
+                    		<div class="pull-right">
+                    			<ul id="product-pagination" class="pagination pagination-sm pro-page-list"></ul>
+                    		</div>
+                    	</div>
+                    </section>
+				</div>
+			</div>
+		</section>
+		
+		<script type="text/javascript">
+			var level = 1;
+			var type = 1;
+			
+			// 获取分页作品信息
+			function initData(start) {
+				var row = 16;
+				$.getJSON('api/productions', {
+					start: start,
+					row: row,
+					level: level,
+					type: type
+				}, function(rm) {
+					$('#product-list').empty();
+					if (rm.code == 1) {
+						if (rm.result.total == 0) {
+							var html = ''
+								+ '<div class="col-lg-12">'
+								+ 	'<div class="alert alert-info fade in">'
+								+ 		'<button class="close close-sm" type="button" data-dismiss="alert">'
+								+ 			'<i class="icon-remove"></i>'
+								+ 		'</button>'
+								+ 		'未查询到任何数据！'
+								+ 	'</div>'
+								+ '</div>';
+							$(html).appendTo('#product-list');
+						} else{
+							if (!start) {
+		
+								//初始化分页
+								$('#product-pagination').twbsPagination({
+									total: rm.result.total,
+									pageSize: row,
+									totalPages : rm.result.totalPages,
+									startPage: rm.result.page,
+									first : '«',
+									prev : '‹',
+									next : '›',
+									last : '»',
+									onPageClick: function(event, page) {
+										initData(row * (page - 1));
+									}
+								});
+							}
+		
+							//加载作品数据
+							$('#product-template').tmpl(rm.result.data).appendTo('#product-list');
+						}
+					} else {
+						yeshidenotify('error', 'middle center', rm.msg, '提示框将在3秒内关闭', 3000);
+					}
+				});
+			}
+			
+			// 查看按钮点击事件
+			function show(v) {
+				var pid = $(v).attr('id');
+				loadMainPage('pages/production/new.html?pid=' + pid);
+			}
+			
+			// 编辑按钮点击事件
+			function edit(v) {
+				var pid = $(v).attr('id');
+				loadMainPage('pages/production/new.html?pid=' + pid);
+			}
+			
+			// 删除按钮点击事件
+			function del(v) {
+				var pid = $(v).attr('id');
+				nconfirm('cool', 'middle center', '警示！', '确定删除该作品？', function() {
+			    	$.ajax({
+			    		type: 'DELETE',
+			    	    url: 'api/productions/' + pid,
+			    	    success: function(rm) {
+			    	    	if (rm.code == 1) {
+			    	    		yeshidenotify('success', 'middle center', rm.msg, '提示框将在3秒内关闭', 3000);
+			    	    		initData(0);
+			    	    	} else {
+			    	    		yeshidenotify('error', 'middle center', rm.msg, '提示框将在3秒内关闭', 3000);
+			    	    	}
+			    	    }
+			    	});
+				});
+			}
+			
+			initData(0);
+			$(function() {
+				$('#boy').click(function() {
+					level = 1;
+					type = 1;
+					initData(0);
+				});
+				$('#girl').click(function() {
+					level = 1;
+					type = 2;
+					initData(0);
+				});
+				$('#tatoon').click(function() {
+					level = 1;
+					type = 3;
+					initData(0);
+				});
+				$('#vip').click(function() {
+					level = 2;
+					type = '';
+					initData(0);
+				});
+				$('#others').click(function() {
+					level = 1;
+					type = 4;
+					initData(0);
+				});
+				initData(0);
+			});
+		</script>
+	</body>
+</html>

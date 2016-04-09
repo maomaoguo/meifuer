@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <title>酷尚管理平台</title>
+    
+	<!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-reset.css" rel="stylesheet">
+    <!--external css-->
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link href="assets/jquery-easy-pie-chart/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/owl.carousel.css" type="text/css">
+    <!-- Custom styles for this template -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/style-responsive.css" rel="stylesheet" />
+    <link href="assets/jquery-notifyjs/styles/metro/notify-metro.css" rel="stylesheet" />
+	<link href="assets/advanced-datatable/media/css/jquery.dataTables.css" rel="stylesheet" />
+ 	<link href="assets/validator/bootstrapValidator.min.css" rel="stylesheet" />
+ 	<link href="assets/fileinput/css/fileinput.min.css" rel="stylesheet" />
+ 	<!--时间空间CSS样式  -->
+ 	<link rel="stylesheet" type="text/css" href="assets/bootstrap-datepicker/css/datepicker.css" />
+ 	
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
+    
+</head>
+
+<body>
+	<section id="container" >
+      <!--header start-->
+      <header class="header white-bg">
+            <div class="sidebar-toggle-box">
+                <div data-original-title="菜单缩放" data-placement="right" class="icon-reorder tooltips"></div>
+            </div>
+            <!--logo start-->
+            <a href="index.html" class="logo">酷尚<span>管理平台</span></a>
+            <!--logo end-->
+            <div class="top-nav ">
+                <!--search & user info start-->
+                <ul class="nav pull-right top-menu">
+                    <!-- user login dropdown start-->
+                    <li class="dropdown">
+                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                            <img alt="" src="img/avatar1_small.jpg">
+                            <span class="username">欢迎您: <strong><sec:authentication property="principal.username" /> </strong>！</span>
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu extended logout">
+                            <div class="log-arrow-up"></div>
+                            <li><a href="javascript:;" onclick ="loadMainPage('pages/user/admin-info.html');"><i class=" icon-suitcase"></i>个人信息</a></li>
+                            <li><a href="javascript:;" onclick ="loadMainPage('pages/user/modify-password.html');"><i class="icon-cog"></i> 修改密码</a></li>
+                            <li><a href="j_spring_security_logout"><i class="icon-key"></i> 退出</a></li>
+                        </ul>
+                    </li>
+                    <!-- user login dropdown end -->
+                </ul>
+                <!--search & user info end-->
+            </div>
+        </header>
+      <!--header end-->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu" id="nav-accordion">
+
+                 <li class="sub-menu">
+                      <a class="active" href="javascript:;" ><i class="icon-book"></i><span>作品管理</span></a>
+                      <ul class="sub">
+                          <li><a href="javascript:;" onclick="loadMainPage('pages/production/new.html');">新增作品</a></li>
+                          <li><a href="javascript:;" onclick="loadMainPage('pages/production/list.html');">作品维护</a></li>
+                      </ul>
+                  </li>
+                 	<li class="sub-menu">
+                      <a href="javascript:;"><i class="icon-laptop"></i><span>用户管理</span></a>
+                      <ul class="sub">
+                         <li><a href="javascript:;" onclick="loadMainPage('pages/user/user.html');">会员管理</a></li>
+                      	 <sec:authorize ifAnyGranted="ADMIN">
+                           <li><a href="javascript:;" onclick="loadMainPage('pages/user/admin.html');">管理员管理</a></li>
+                         </sec:authorize>
+                      </ul>
+                  </li>
+                  
+                 <li>
+                      <a href="javascript:;" onclick="loadMainPage('pages/price/price.jsp');"><i class="icon-dashboard"></i><span>会员价目管理</span>
+                      </a>
+                  </li>
+                  <!--multi level menu end-->
+
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
+      <!--main content start-->
+      <section id="main-content">
+      
+      </section>
+      <!--main content end-->
+      <!--footer start-->
+      <footer class="site-footer">
+          <div class="text-center">
+              2015 &copy; 酷尚儿童牛仔裤设计公司.
+              <a href="javascript:;" class="go-top"><i class="icon-angle-up"></i></a>
+          </div>
+      </footer>
+      <!--footer end-->
+  </section>
+	
+	<!-- js placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery.min.js"></script>
+   <!--  <script src="js/jquery-1.8.3.min.js"></script> -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dcjqaccordion.2.7.js"></script>
+    <script src="js/jquery.scrollTo.min.js"></script>
+    <script src="js/jquery.nicescroll.js"></script>
+    <script src="js/jquery.sparkline.js"></script>
+    <script src="assets/jquery-easy-pie-chart/jquery.easy-pie-chart.js"></script>
+    <script src="js/owl.carousel.js" ></script>
+    <script src="js/jquery.customSelect.min.js" ></script>
+    <script src="js/respond.min.js" ></script>
+    <script src="assets/advanced-datatable/media/js/jquery.dataTables.min.js"></script>
+    <script src="js/jquery.dcjqaccordion.2.7.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/jquery.tmpl.min.js"></script>
+
+    <!--common script for all pages-->
+    <script src="js/common-scripts.js"></script>
+
+    <!--script for this page-->
+    <script src="js/sparkline-chart.js"></script>
+    <script src="js/easy-pie-chart.js"></script>
+    <script src="js/count.js"></script>
+    <script src="js/jquery-form.js"></script>
+    <!--notify script for all page-->
+	<script src="assets/jquery-notifyjs/notify-combined.js" ></script>
+	<script src="assets/jquery-notifyjs/styles/metro/notify-metro.js"></script>
+    <script src="assets/jquery-notifyjs/notifications.js"></script>
+    <script src="assets/validator/bootstrapValidator.min.js"></script>
+    <!--时间控件 JS -->
+   	<script type="text/javascript" src="assets/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+   	
+    <script src="js/jquery.tmpl.min.js"></script>
+	<script src="assets/pagination/jquery.twbsPagination.js"></script>
+	<script src="assets/dropzone/dropzone.js"></script>
+	<script type="text/javascript">
+		function loadMainPage(v) {
+			$('#main-content').load(v);
+		}
+	
+		$(function() {	
+			loadMainPage('pages/production/new.html');
+			//seesion 超时处理
+			$.ajaxSetup({  
+			    contentType:'application/x-www-form-urlencoded;charset=utf-8',  
+			    complete:function(XMLHttpRequest,textStatus){    
+			    	var sessionstatus=XMLHttpRequest.getResponseHeader('sessionstatus');
+			    	if(sessionstatus=='timeout'){ 
+			    		yeshidenotify('warning', 'middle center', '您离开的太久，请重新登录！', '提示框将在3秒内关闭', 3000);
+			    		window.location = 'login.jsp';
+			    	} 
+			    }
+			}); 
+		});
+		
+	</script>
+</body>
+</html>

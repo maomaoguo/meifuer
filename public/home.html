@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Mosaddek">
+    <meta name="keyword" content="FlatLab, Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
+    <link rel="shortcut icon" href="img/favicon.png">
+
+    <title>美福尔装饰——墙纸</title>
+    
+	<!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-reset.css" rel="stylesheet">
+    <!--external css-->
+    <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link href="assets/jquery-easy-pie-chart/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link rel="stylesheet" href="css/owl.carousel.css" type="text/css">
+    <link href="assets/fancybox/source/jquery.fancybox.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="css/gallery.css" />
+    <link href="assets/fancybox/source/helpers/jquery.fancybox-thumbs.css" rel="stylesheet"/>
+    <!-- Custom styles for this template -->
+    <link href="css/style1.css" rel="stylesheet">
+    <link href="css/style-responsive.css" rel="stylesheet" />
+    <link href="assets/jquery-notifyjs/styles/metro/notify-metro.css" rel="stylesheet" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
+    
+    <!--[if IE 7]>
+	<link rel="stylesheet" href="assets/font-awesome/css/font-awesome-ie7.min.css">
+	<![endif]-->
+	
+    <style type="text/css">
+.header-carousal {
+    background-color: #2c1308;
+    background-image: url("img/bg-header.png");
+    background-position: center bottom;
+    background-repeat: repeat-x;
+    color: #fff;
+    height: 100%;
+    position: relative;
+    box-shadow: 0 1px 2px rgba(0,0,0,.25);
+	text-shadow: 0 0 1px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.3);
+}
+
+.header-carousal .owl-carousel,
+.header-carousal .owl-carousel .owl-wrapper,
+.header-carousal .owl-carousel .owl-wrapper-outer,
+.header-carousal .owl-carousel .owl-wrapper .owl-item {
+    height: 100%;
+}
+.header-carousal .owl-carousel .owl-wrapper .owl-item .item{
+	background-size: 100% 100%;
+    height: 100%;
+    padding: 20px;
+}
+
+.header-carousal .owl-carousel .owl-wrapper .owl-item .item p{
+	color: rgba(255,255,255,.6);
+    margin-top: 20px;
+}
+.header-carousal .owl-buttons {
+	padding: 0 10px;
+	top: 50%;
+}
+
+.header-carousal .owl-buttons .owl-next {
+    margin-right: 10px;
+}
+
+#header-wrapper {
+    background-color: #2c1308;
+    background-image: url("img/bg-header.png");
+    background-position: center bottom;
+    background-repeat: repeat-x;
+    border-bottom: 1px solid #402519;
+    height: 200px;
+    width: 100%;
+    padding: 0 80px;
+}
+
+.white-bg {
+    background-image: url("img/bg-menu.png");
+    background-position: center top;
+    background-repeat: repeat-x;
+}
+
+.horizontal-menu .navbar-nav > li.active > a {
+    background-color: #B02905;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s ease 0s;
+}
+
+</style>
+</head>
+
+<body class="full-width">
+	<section id="container">
+	<section id="header-wrapper">
+		<div class="header-carousal">
+	        <div id="owl-header" class="owl-carousel owl-theme">
+	            <div class="item clearfix"style="background-image: url('img/logo.jpg');">
+	                <h1>酷尚儿童牛仔裤设计工作室</h1>
+	                <p>专注于儿童牛仔裤设计</p>
+	            </div>
+	            <div class="item clearfix"style="background-image: url('img/logo.jpg');">
+	                <h1>酷尚儿童牛仔裤设计工作室</h1>
+	                <p>设计一流，服务一流</p>
+	            </div>
+	            <div class="item clearfix"style="background-image: url('img/logo.jpg');">
+	                <h1>酷尚儿童牛仔裤设计工作室</h1>
+	                <p>专注打造舒适时尚的牛仔裤</p>
+	            </div>
+	            <div class="item clearfix"style="background-image: url('img/logo.jpg');">
+	                <h1>酷尚儿童牛仔裤设计工作室</h1>
+	                <p>追求时尚，追求酷帅</p>
+	            </div>
+	        </div>
+	    </div>
+    </section>
+    <section id="header">
+		<header class="navbar-wrapper header white-bg">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	                  <span class="icon-bar"></span>
+	                  <span class="icon-bar"></span>
+	                  <span class="icon-bar"></span>
+	              </button>
+	              <div class="horizontal-menu navbar-collapse collapse ">
+	                  <ul class="nav navbar-nav">
+	                      <li class="active"><a href="javascript:;" onclick="loadMainPage('pages/home.html');"><i class="icon-home"></i>首页</a></li>
+	                      <li><a href="javascript:;" onclick="loadMainPage('pages/near.html');"><i class="icon-leaf"></i>产品展示</a></li>
+	                      <li><a href="javascript:;"><i class="icon-male"></i>积分换购</a></li>
+	                  </ul>
+	              </div>
+	              <div class="top-nav ">
+	                  <ul class="nav pull-right top-menu" style="margin-right: 60px;">
+	                      <!-- user login dropdown start-->
+	                      <li class="dropdown">
+	                          <a href="javascript:;" style="border: none !important;" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown">
+	                              <span class="username">欢迎您: <strong>admin </strong>！</span>
+								  <b class="caret"></b>
+	                          </a>
+							  <ul class="dropdown-menu extended inbox">
+									  <div class="log-arrow-up notify-arrow-red"></div>
+								  <li><a href="javascript:;" onclick="loadMainPage('pages/production.html');"><i class="icon-cog" style="padding: 0 10px"></i>修改密码</a></li>
+								  <li><a href="javascript:;" ><i class="icon-key" style="padding: 0 10px"></i>退出</a></li>
+							  </ul>
+	                      </li>
+	                      <!-- user login dropdown end -->
+	                  </ul>
+	              </div>
+	
+	          </div>
+	    </header>
+	      <!--main content start-->
+	      <section id="main-content">
+	      
+	      </section>
+	      <!--main content end-->
+	      <!--footer start-->
+	      <footer class="site-footer">
+	          <div class="text-center">
+	              2016 &copy; 成都美福尔装饰材料有限公司.
+	              <a href="#container" class="go-top"><i class="icon-angle-up"></i></a>
+	          </div>
+	      </footer>
+	      <!--footer end-->
+    </section>
+      
+  </section>
+	
+	<!-- js placed at the end of the document so the pages load faster -->
+    <script src="js/jquery.js"></script>
+    <script src="js/jquery-1.8.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.dcjqaccordion.2.7.js"></script>
+    <script src="js/jquery.scrollTo.min.js"></script>
+    <script src="js/jquery.nicescroll.js"></script>
+    <script src="js/jquery.sparkline.js"></script>
+    <script src="assets/jquery-easy-pie-chart/jquery.easy-pie-chart.js"></script>
+    <script src="js/owl.carousel.js" ></script>
+    <script src="js/jquery.customSelect.min.js" ></script>
+    <script src="js/respond.min.js" ></script>
+	<script src="assets/fancybox/source/jquery.fancybox.js"></script>
+	<script src="assets/fancybox/source/jquery.fancybox.pack.js"></script>
+	<script src="assets/fancybox/source/helpers/jquery.fancybox-thumbs.js"></script>
+    <script src="js/jquery.dcjqaccordion.2.7.js"></script>
+
+    <!--common script for all pages-->
+    <script src="js/common-scripts.js"></script>
+
+    <!--script for this page-->
+    <script src="js/sparkline-chart.js"></script>
+    <script src="js/easy-pie-chart.js"></script>
+    <script src="js/count.js"></script>
+    
+    <!--notify script for all page-->
+	<script src="assets/jquery-notifyjs/notify-combined.js" ></script>
+	<script src="assets/jquery-notifyjs/styles/metro/notify-metro.js"></script>
+    <script src="assets/jquery-notifyjs/notifications.js"></script>
+    <script src="js/modernizr.custom.js"></script>
+    <script src="js/toucheffects.js"></script>
+    
+    <script src="assets/pin/jquery.pin.min.js"></script>
+	<script type="text/javascript">
+		
+		function loadMainPage(v) {
+			$('#main-content').load(v);
+		}
+
+		$(function() {
+
+			$('#main-content').css({
+				'min-height' : ($(window).height() - 288) + 'px'
+			});
+
+			$('header').pin({
+				containerSelector : '#header'
+			});
+
+			$("#owl-header").owlCarousel({
+				navigation : true,
+				slideSpeed : 300,
+				paginationSpeed : 400,
+				singleItem : true,
+				autoPlay : true
+			});
+
+			loadMainPage('pages/home.html');
+
+			$('header .horizontal-menu ul li a').on(
+					'click',
+					function() {
+						$('header .horizontal-menu ul').find('li').removeClass(
+								'active');
+						$(this).parents('li').addClass('active');
+					})
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+ul.sidebar-menu li ul.sub li a.active {
+	color: #ff6c60;
+}
+
+.dropdown-menu.extended.logout>li {
+	width: 50%;
+}
+
+.top-nav ul.top-menu>li .dropdown-menu.logout {
+	width: auto !important;
+}

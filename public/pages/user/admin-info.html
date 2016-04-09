@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>个人信息</title>
+<meta charset="utf-8">
+</head>
+<body>
+	<section class="wrapper">
+              <div class="mail-box">
+                      <div class="inbox-head">
+                          <h3>个人信息</h3>
+                          <div class="pull-right position" >
+                              <div class="input-append">
+                              </div>
+                          </div>
+                      </div>
+	           <form id="sys_form" method="post"  action="api/users/update"  class="form-horizontal">
+					<div class="modal-body">
+					<input name="uid" id="uid" type="hidden" /> 
+						<div class="form-group">
+							<label class="col-lg-2 control-label" for="name"> 姓名： </label>
+							<div class="col-lg-6">
+								<input type="text" id="name" name="name" class="form-control input-sm" placeholder="姓名" maxlength="32"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label" for= "sex">性  别：</label>
+							<div class="col-lg-6">
+								<select data-placeholder="请选择性别" name="sex" id="sex" class="form-control chosen-select input-sm" tabindex="4">
+									<option value=""></option>
+									<option value="1" selected="selected"> 男 </option>
+									<option value="2"> 女 </option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label" for="qq"> qq： </label>
+							<div class="col-lg-6">
+								<input type="text" id="qq" name="qq" class="form-control input-sm" placeholder="qq" maxlength="225"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label" for="tel"> 电话号码： </label>
+							<div class="col-lg-6">
+								<input type="text" id="tel" name="tel" class="form-control input-sm" placeholder="电话号码"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label" for="address"> 地址： </label>
+							<div class="col-lg-6">
+								<input type="text" id="address" name="address" class="form-control input-sm" placeholder="地址"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label" for="email"> 邮箱： </label>
+							<div class="col-lg-6">
+								<input type="text" id="email" name="email"  class="form-control input-sm" placeholder="邮箱"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label" for="note"> 个人介绍： </label>
+							<div class="col-lg-6">
+								<input type="text" id="note" name="note" class="form-control input-sm" placeholder="个人介绍"/>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label" for="contacts"> 其他： </label>
+							<div class="col-lg-6">
+								<input type="text" id="contacts" name="contacts" class="form-control input-sm" placeholder="其他"/>
+							</div>
+						</div>
+						<div class="form-group" style="margin-top: 15px;">
+							<div class="col-lg-2">
+							</div>
+							<div class="col-lg-6" style="text-align: right;">
+								<button class="btn btn-sm btn-primary" type="submit" ><i class="fa fa-save "></i>保存</button>
+							</div>
+						</div>
+					</div>
+				</form>
+              </div>
+          </section>
+<script type="text/javascript">
+	 $(function() {
+		 initData();
+		 initValidate();
+	});
+	//获取用户资料
+	function initData(){
+		$.get("api/users/info", function(data) {
+			if (data.code == 1) {
+				$('#uid').val(data.result.uid);
+				$('#name').val(data.result.name);
+		        $('#tel').val(data.result.tel);
+		        $('#email').val(data.result.email);
+		        $('#sex').val(data.result.sex);
+		        $('#address').val(data.result.address);
+		        $('#email').val(data.result.email);
+		        $('#note').val(data.result.note);
+		        $('#contacts').val(data.result.contacts);
+			} else {
+				yeshidenotify('error', 'top right', "获取个人登录信息失败", "提示将在3秒内关闭",3000);
+			}
+		});
+	}
+	/* function saveInfo(){
+		var name = $('#name').val();
+		var tel = $('#tel').val();
+		var email = $('#email').val();
+		var sex =  $('#sex').val();
+		var url = "api/users/update";//添加url
+		$('#sys_form').ajaxSubmit({
+			type : 'POST',
+			url : url,
+			dataType: "json",
+			success : function(msg) {
+				if (msg.code == 1) {
+					yeshidenotify('success', 'top right', "个人信息修改成功", "提示将在3秒内关闭",3000);
+					initData();
+				} else {
+					yeshidenotify('error', 'top right', "个人信息修改失败", "提示将在3秒内关闭",3000);
+				}
+			}
+		});
+	} */
+	
+	//form表单校验
+	function initValidate() {
+		$('#sys_form').on('init.field.bv', function(e, data) {
+            var $parent = data.element.parents('.form-group'),
+                $icon   = $parent.find('.form-control-feedback[data-bv-icon-for="' + data.field + '"]');
+
+            $icon.on('click.clearing', function () {
+                if ($icon.hasClass('glyphicon-remove')) {
+                    data.bv.resetField(data.element);
+                }
+            });
+        })
+        .bootstrapValidator({
+            excluded: ':disabled',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+            	'name': {
+	                validators: {
+	                    notEmpty: {
+	                        message: '名称不能为空！'
+	                    }
+	                }
+	            },
+            	'sex': {
+	                validators: {
+	                    notEmpty: {
+	                        message: '请选择性别！'
+	                    }
+	                }
+	            },
+	            'tel': {
+	            	validators: {
+	            		notEmpty: {
+	                        message: '手机号码不能为空！'
+	                    },
+	            		 stringLength: {
+		                    max: 11,
+		                    message: '手机号码长度不能大于11！'
+		                }
+		                
+	            	}
+	            }
+            }
+        }) .on('success.form.bv', function (e) {
+            e.preventDefault();
+
+            var $form = $(e.target);
+            $.post($form.attr('action'),$form.serialize(),
+            	function (msg) {
+	                if (msg.code == 1) {
+	                	yeshidenotify('success', 'top right', "个人信息修改成功", "提示将在3秒内关闭",3000);
+	                } else {
+	                	yeshidenotify('error', 'top right', "个人信息修改失败", "提示将在3秒内关闭",3000);
+	                }
+            	}, 'json');
+        });
+	}
+</script>
+</body>
+</html>
