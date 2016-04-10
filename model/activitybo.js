@@ -2,7 +2,7 @@
  * 商品BO——兑换的
  * Created by duanying on 2016/4/9.
  */
-var mongoose = require('../../../db/db');
+var mongoose = require('../db/db');
 
 var activitySchema = mongoose.Schema({
     "name":String,//活动名称
@@ -17,9 +17,9 @@ var activitySchema = mongoose.Schema({
      * "num":Number，//剩余数量
      * "total":Number,//总数量
      */
-    "creat_at":Date//<时间>
+    "create_at":Date//<时间>
 });
 
-var activity = mongoose.model('activits', activitySchema);
+var activity = mongoose.model('activities', activitySchema);
 
 module.exports = activity;
