@@ -1,0 +1,160 @@
+<div class="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel">
+                <header class="panel-heading">
+                    <form class="form-inline" role="form">
+                        <div class="form-group">
+                            <input type="email" class="form-control" id="exampleInputEmail2" placeholder="活动名称">
+                        </div>
+                        <button type="button" class="btn btn-info" onclick="initTable()">查询</button>
+                        <button type="reset" class="btn btn-warning">重置</button>
+                        <button type="button" class="btn btn-success pull-right" onclick="loadMainPage('pages/activity/activity.html')">新增</button>
+                    </form>
+                </header>
+                <div class="panel-body">
+                    <div class="adv-table">
+                        <table id="activities-table" class="display table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>活动名称</th>
+                                    <th style="text-align: center;">开始时间</th>
+                                    <th style="text-align: center;">结束时间</th>
+                                    <th style="text-align: center;">创建时间</th>
+                                    <th style="text-align: center;">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //页面加载完成后执行
+    $(function() {
+        initTable();
+    });
+
+    //初始化table
+    function initTable() {
+        $('#activities-table').dataTable().fnDestroy();
+
+        $('#activities-table').dataTable({
+            'bProcessing': false,
+            'bServerSide': true,
+            'sAjaxSource': 'api/activities',
+            'fnServerData': retrieveData,
+            'bDestroy': true,
+            'bRetrieve': true,
+            'sAjaxDataProp': 'data',
+            'iDisplayLength': 10,
+            'bFilter': false,
+            'bLengthChange': false,
+            'bAutoWidth': false,
+            'bSort': false,
+            'aoColumns': [{
+                'mData': 'name'
+            }, {
+                'mData': 'start_at',
+                'mRender': dateRender,
+                'fnCreatedCell': function(nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
+            }, {
+                'mData': 'end_at',
+                'mRender': dateRender,
+                'fnCreatedCell': function(nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
+            }, {
+                'mData': 'create_at',
+                'mRender': dateRender,
+                'fnCreatedCell': function(nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
+            }, {
+                'mData': 'aid',
+                'mRender': descRender,
+                'fnCreatedCell': function(nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
+            }]
+        });
+    }
+
+    //渲染时间列
+    function dateRender(data, type, row) {
+        return moment(data).format('YYYY-MM-DD HH:mm:ss');
+    }
+
+    //渲染操作列
+    function descRender(data, type, row) {
+        var str = '<a id="'
+                + data
+                + '" onclick="showActivity(this)" align="center" href="javascript:;" data-toggle="tooltip" title="编辑"><i class="icon-edit text-warning"></i></a>';
+        return  str;
+    }
+
+    // 异步获取table数据
+    function retrieveData(sSource, aoData, fnCallback) {
+        var row = 10;
+        var start = 0;
+        $.each(eval(aoData), function(i, field) {
+            if (field.name == 'iDisplayStart') {
+                start = field.value;
+            }
+            if (field.name == 'iDisplayLength') {
+                row = field.value;
+            }
+        });
+
+        var name = $('#q-name').val();
+        $.getJSON(sSource, {
+            start: start,
+            row: row,
+            name: name
+        }, function(rm) {
+            if (rm.code == 1) {
+                var data = rm.result;
+                if (!data.data) {
+                    data.data = [];
+                }
+                data.iTotalRecords = rm.result.total ? rm.result.total:0;
+                data.iTotalDisplayRecords = rm.result.total ? rm.result.total:0;
+                fnCallback(data);
+            } else {
+                yeshidenotify('error', 'top right', '查询失败！', '提示将在2秒内关闭', 2000);
+            }
+        });
+    }
+
+    //详情展示
+    function showActivity(v) {
+        var aid = $(v).attr('id');
+        $('#main-content').load('pages/activity/activity.html', function() {
+            $.getJSON('api/activities/'+aid, function(rm) {
+                if (rm.code == 1) {
+                    $('.panel-heading').text('编辑活动');
+
+                    var activity = rm.result;
+                    $('#aid').val(activity._id);
+                    $('#name').val(activity.name);
+                    $('#start_at').val(moment(activity.start_at).format('YYYY-MM-DD HH:mm:ss'));
+                    $('#end_at').val(moment(activity.end_at).format('YYYY-MM-DD HH:mm:ss'));
+                    var goods = activity.goods;
+                    var presentTemplate = $.templates('#present-template');
+                    var htmlOutput = presentTemplate.render(goods);
+                    $('#goods .present').remove();
+                    $('#goods').prepend(htmlOutput);
+                } else {
+                    yeshidenotify('error', 'top right', '详情获取失败！', '提示将在2秒内关闭', 2000);
+                }
+            });
+        });
+    }
+</script>

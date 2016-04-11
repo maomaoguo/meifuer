@@ -1,0 +1,323 @@
+<style>
+    .fileupload {
+        margin-bottom: 0;
+    }
+    .fileupload .thumbnail {
+        margin-bottom: 0;
+    }
+    .present {
+        border: 1px solid #e2e2e4;
+        overflow: auto;
+        padding: 10px 0;
+        margin-bottom: 5px;
+    }
+    .present-plus {
+         float: left;
+         border-radius: 4px;
+         margin-bottom: 0;
+         padding: 15px;
+         width: 100%;
+         border: 1px solid #e2e2e4;
+         text-align: center;
+         color: #ccc;
+         cursor: pointer;
+     }
+    .present-plus:hover {
+        color: #aaa;
+    }
+    .present a {
+        position: absolute;
+        top: -10px;
+        right: 5px;
+        font-size: 20px;
+        display: none;
+    }
+    .present:hover a {
+        display: block;
+    }
+</style>
+
+<script id="present-template" type="text/x-jsrender">
+    <div class="present">
+        <div class="col-lg-4">
+            <div data-provides="fileupload" class="fileupload fileupload-exists" data-url="{{:url}}">
+                <input type="hidden" value="" name="">
+                <div style="width: 220px; height: 164px;" class="fileupload-new thumbnail">
+                    <img src="http://www.placehold.it/220x164/EFEFEF/AAAAAA&amp;text=礼品图片">
+                </div>
+                <div style="max-width: 220px; max-height: 164px; line-height: 10px;" class="fileupload-preview fileupload-exists thumbnail">
+                    <img style="max-height: 164px;" src="{{:url}}">
+                </div>
+                <div style="position: absolute; bottom: 0; left: 159px;">
+                    <span class="btn btn-primary btn-file btn-xs">
+                        <span class="fileupload-new"><i class="icon-picture"></i> 选择图片</span>
+                        <span class="fileupload-exists"><i class="icon-undo"></i> 更改图片</span>
+                        <input type="file" name="present-img" class="default" data-no="{{:no}}">
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <input name="present-no" value="{{:no}}" hidden>
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label">礼品名称</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" name="present-name" value="{{:name}}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label">礼品数量</label>
+                <div class="col-sm-5" style="border-right: 1px solid #ccc;">
+                    <input type="text" class="form-control" name="present-num" value="{{:num}}" onchange="changeNumber(this, 'num')" data-val="{{:num}}">
+                </div>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" name="present-total" value="{{:total}}" onchange="changeNumber(this, 'total')" data-val="{{:total}}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-sm-2 control-label">所需积分</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" name="present-credit" value="{{:credit}}">
+                </div>
+            </div>
+            <a href="javascript:;" onclick="delPresent(this)" title="删除">
+                <i class="icon-remove-sign"></i>
+            </a>
+        </div>
+    </div>
+</script>
+
+<div class="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel">
+                <header class="panel-heading">
+                    新增活动
+                </header>
+                <div class="panel-body">
+                    <form id="activity-form" class="form-horizontal tasi-form" enctype='multipart/form-data'>
+                        <input id="aid" hidden>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">活动名称</label>
+                            <div class="col-sm-10">
+                                <input id="name" name="name" type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 col-sm-2 control-label">活动时间</label>
+                            <div class="col-sm-10">
+                                <div class="input-group input-large">
+                                    <input id="start_at" class="form-control dpd1" type="text" name="start_at">
+                                    <span class="input-group-addon">到</span>
+                                    <input id="end_at" class="form-control dpd2" type="text" name="end_at">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">活动礼品</label>
+                            <div id="goods" class="col-sm-10">
+                                <div class="present">
+                                    <div class="col-lg-4">
+                                        <div class="fileupload fileupload-new" data-provides="fileupload">
+                                            <div class="fileupload-new thumbnail" style="width: 220px; height: 164px;">
+                                                <img src="http://www.placehold.it/220x164/EFEFEF/AAAAAA&amp;text=礼品图片">
+                                            </div>
+                                            <div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 220px; max-height: 164px; line-height: 20px;"></div>
+                                            <div style="position: absolute; bottom: 0; left: 159px;">
+                                                <span class="btn btn-primary btn-file btn-xs">
+                                                    <span class="fileupload-new"><i class="icon-picture"></i> 选择图片</span>
+                                                    <span class="fileupload-exists"><i class="icon-undo"></i> 更改图片</span>
+                                                    <input type="file" class="default" name="present-img">
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-8">
+                                        <input name="present-no" hidden>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 col-sm-2 control-label">礼品名称</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="present-name">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">礼品数量</label>
+                                            <div class="col-sm-5" style="border-right: 1px solid #ccc;">
+                                                <input type="text" class="form-control" name="present-num" placeholder="余量" onchange="changeNumber(this, 'num')" data-val="0">
+                                            </div>
+                                            <div class="col-sm-5">
+                                                <input type="text" class="form-control" name="present-total" placeholder="总量" onchange="changeNumber(this, 'total')" data-val="0">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-sm-2 col-sm-2 control-label">所需积分</label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="form-control" name="present-credit">
+                                            </div>
+                                        </div>
+                                        <a href="javascript:;" onclick="delPresent(this)" title="删除">
+                                            <i class="icon-remove-sign"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div id="plus-btn" class="present-plus" onclick="addPresent()">
+                                    <span><i class="icon-plus"></i> 添加礼品</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group pull-right" style="padding: 0 15px;">
+                            <button class="btn btn-success" type="button" onclick="saveActivity()">保存</button>
+                            <button class="btn btn-warning" type="button" onclick="loadMainPage('pages/activity/list.html')">取消</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //页面加载完成后执行
+    $(function() {
+
+        //初始化时间控件
+        var nowTemp = new Date();
+        var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+        var checkin = $('.dpd1').datepicker({
+            format: 'yyyy-mm-dd',
+            onRender: function(date) {
+                return date.valueOf() < now.valueOf() ? 'disabled' : '';
+            }
+        }).on('changeDate', function(ev) {
+            if (ev.date.valueOf() > checkout.date.valueOf()) {
+                var newDate = new Date(ev.date)
+                newDate.setDate(newDate.getDate() + 1);
+                checkout.setValue(newDate);
+            }
+            checkin.hide();
+            $('.dpd2')[0].focus();
+        }).data('datepicker');
+        var checkout = $('.dpd2').datepicker({
+            format: 'yyyy-mm-dd',
+            onRender: function(date) {
+                return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
+            }
+        }).on('changeDate', function(ev) {
+            checkout.hide();
+        }).data('datepicker');
+    });
+
+    //添加礼品
+    var newPresentHtml = '<div class="present">' + $('.present').html() + '</div>';
+    function addPresent() {
+        $('#plus-btn').before(newPresentHtml);
+    }
+
+    //删除礼品
+    function delPresent(v) {
+        $(v).parents('.present').remove();
+    }
+
+    //修改礼品数量
+    function changeNumber(v, type) {
+        var preVal = Number($(v).attr('data-val'));
+        $(v).attr('data-val', $(v).val());
+        var diff = Number($(v).val()) - preVal;
+        var $element;
+        if (type == 'num') {
+            $element = $(v).parent().next().find('input');
+        } else {
+            $element = $(v).parent().prev().find('input');
+        }
+        $element.val(Number($element.val()) + diff);
+        $element.attr('data-val', $element.val());
+    }
+
+    //保存活动
+    function saveActivity() {
+
+        //输入校验
+        var flag = true;
+        var name = $('#name').val();
+        if (!name) {
+            yeshidenotify('warning', 'top center', '请输入活动名称！', '提示将在2秒内关闭', 2000);
+            flag = false;
+            return false;
+        }
+        var startAt = $('#start_at').val();
+        if (!startAt) {
+            yeshidenotify('warning', 'top center', '请选择活动开始时间！', '提示将在2秒内关闭', 2000);
+            flag = false;
+            return false;
+        }
+        var endAt = $('#end_at').val();
+        if (!endAt) {
+            yeshidenotify('warning', 'top center', '请选择活动结束时间！', '提示将在2秒内关闭', 2000);
+            flag = false;
+            return false;
+        }
+        $('#goods .present').each(function() {
+            if ($(this).find('div.fileupload').hasClass('fileupload-new')) {
+                yeshidenotify('warning', 'top center', '请上传礼品图片！', '提示将在2秒内关闭', 2000);
+                flag = false;
+                return false;
+            }
+            $(this).find('div.col-lg-8 input').each(function(index, e) {
+                var text = '';
+                switch (index) {
+                    case 1: {text = '请输入礼品名称！';break;}
+                    case 2: {text = '请输入礼品余量！';break;}
+                    case 3: {text = '请输入礼品总量！';break;}
+                    case 4: {text = '请输入所需积分！';break;}
+                    default : {text = '您还有信息未录入！';break;}
+                }
+                if (index!=0 && !$(e).val()) {
+                    yeshidenotify('warning', 'top center', text, '提示将在2秒内关闭', 2000);
+                    flag = false;
+                    return false;
+                }
+            });
+        });
+
+        var aid = $('#aid').val();
+        var url = 'api/activities/';
+        var data = {};
+        if (aid) {
+            url += aid;
+            var goods = [];
+            $('.present').each(function() {
+                var good = {
+                    no: $(this).find('input[name="present-no"]').val(),
+                    name: $(this).find('input[name="present-name"]').val(),
+                    preUrl: $(this).find('.fileupload').attr('data-url'),
+                    state: $(this).find('.fileupload').attr('data-state'),
+                    num: Number($(this).find('input[name="present-num"]').val()),
+                    total: Number($(this).find('input[name="present-total"]').val()),
+                    credit: Number($(this).find('input[name="present-credit"]').val())
+                };
+                goods.push(good);
+            });
+            data = {goods: goods};
+        }
+
+        //表单提交
+        if (flag) {
+            $('#activity-form').ajaxSubmit({
+                url: url,
+                type: 'post',
+                data: data,
+                dataType: 'json',
+                success: function(rm) {
+                    if (rm.code == 1) {
+                        yeshidenotify('success', 'top center', '保存成功！', '提示将在2秒内关闭', 2000);
+                        loadMainPage('pages/activity/list.html');
+                    } else {
+                        yeshidenotify('error', 'top center', '保存失败！', '提示将在2秒内关闭', 2000);
+                    }
+                }
+            });
+        }
+    }
+</script>

@@ -17,6 +17,10 @@
     <link href="assets/font-awesome/css/font-awesome.css" rel="stylesheet" />
     <link href="assets/jquery-easy-pie-chart/jquery.easy-pie-chart.css" rel="stylesheet" type="text/css" media="screen"/>
     <link rel="stylesheet" href="css/owl.carousel.css" type="text/css">
+    <!--时间空间CSS样式  -->
+    <link rel="stylesheet" type="text/css" href="assets/bootstrap-datepicker/css/datepicker.css" />
+    <link rel="stylesheet" type="text/css" href="assets/bootstrap-fileupload/bootstrap-fileupload.css" />
+    <link rel="stylesheet" type="text/css" href="assets/bootstrap-daterangepicker/daterangepicker-bs3.css" />
     <!-- Custom styles for this template -->
     <link href="css/style.css" rel="stylesheet">
     <link href="css/style-responsive.css" rel="stylesheet" />
@@ -24,8 +28,6 @@
     <link href="assets/advanced-datatable/media/css/jquery.dataTables.css" rel="stylesheet" />
     <link href="assets/validator/bootstrapValidator.min.css" rel="stylesheet" />
     <link href="assets/fileinput/css/fileinput.min.css" rel="stylesheet" />
-    <!--时间空间CSS样式  -->
-    <link rel="stylesheet" type="text/css" href="assets/bootstrap-datepicker/css/datepicker.css" />
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 tooltipss and media queries -->
     <!--[if lt IE 9]>
@@ -84,13 +86,17 @@
 
                 <li class="sub-menu">
                     <a href="javascript:;"><i class="icon-laptop"></i><span>商品管理</span></a>
+                    <ul class="sub">
+                        <li><a href="javascript:;" onclick="loadMainPage('pages/production/list.html')">商品列表</a></li>
+                        <li><a href="javascript:;" onclick="loadMainPage('pages/production/new.html')">商品新增</a></li>
+                    </ul>
                 </li>
 
                 <li class="sub-menu">
-                    <a href="javascript:;"><i class="icon-gift"></i><span>礼品管理</span></a>
+                    <a href="javascript:;"><i class="icon-gift"></i><span>活动管理</span></a>
                     <ul class="sub">
-                        <li><a href="javascript:;">礼品管理</a></li>
-                        <li><a href="javascript:;">订单管理</a></li>
+                        <li><a href="javascript:;" onclick="loadMainPage('pages/activity/list.html')">活动管理</a></li>
+                        <li><a href="javascript:;" onclick="loadMainPage('pages/order/list.html')">订单管理</a></li>
                     </ul>
                 </li>
 
@@ -156,12 +162,16 @@
 <script src="assets/jquery-notifyjs/styles/metro/notify-metro.js"></script>
 <script src="assets/jquery-notifyjs/notifications.js"></script>
 <script src="assets/validator/bootstrapValidator.min.js"></script>
+<script src="assets/JsRender/jsrender.min.js"></script>
+<script src="js/moment.min.js"></script>
 <!--时间控件 JS -->
 <script type="text/javascript" src="assets/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
 
 <script src="js/jquery.tmpl.min.js"></script>
 <script src="assets/pagination/jquery.twbsPagination.js"></script>
 <script src="assets/dropzone/dropzone.js"></script>
+<script type="text/javascript" src="assets/bootstrap-fileupload/bootstrap-fileupload.js"></script>
+
 <script type="text/javascript">
     function loadMainPage(v) {
         $('#main-content').load(v);
