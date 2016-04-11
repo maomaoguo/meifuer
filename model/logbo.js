@@ -2,7 +2,7 @@
  * 日志bo
  * Created by duanying on 2016/4/9.
  */
-var mongoose = require('../../../db/db');
+var mongoose = require('../db/db');
 
 var logSchema = mongoose.Schema({
     "op_id":String,//操作人id
