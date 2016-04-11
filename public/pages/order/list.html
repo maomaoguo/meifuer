@@ -1,0 +1,170 @@
+<div class="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel">
+                <header class="panel-heading">
+                    <form class="form-inline" role="form">
+                        <div class="form-group">
+                            <input type="text" id="q-name" class="form-control" placeholder="礼品名称">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="q-customer" class="form-control" placeholder="客户名称">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="q-to" class="form-control" placeholder="收件人">
+                        </div>
+                        <button type="button" class="btn btn-info" onclick="initTable()">查询</button>
+                        <button type="reset" class="btn btn-warning">重置</button>
+                    </form>
+                </header>
+                <div class="panel-body">
+                    <div class="adv-table">
+                        <table id="orders-table" class="display table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>礼品名称</th>
+                                <th>客户名称</th>
+                                <th>收件人</th>
+                                <th>收件人电话</th>
+                                <th style="text-align: center;">快递公司</th>
+                                <th style="text-align: center;">快递单号</th>
+                                <th style="text-align: center;">状态</th>
+                                <th style="text-align: center;">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //页面加载完成后执行
+    $(function() {
+        initTable();
+    });
+
+    //初始化table
+    function initTable() {
+        $('#orders-table').dataTable().fnDestroy();
+
+        $('#orders-table').dataTable({
+            'bProcessing': false,
+            'bServerSide': true,
+            'sAjaxSource': 'api/orders',
+            'fnServerData': retrieveData,
+            'bDestroy': true,
+            'bRetrieve': true,
+            'sAjaxDataProp': 'data',
+            'iDisplayLength': 10,
+            'bFilter': false,
+            'bLengthChange': false,
+            'bAutoWidth': false,
+            'bSort': false,
+            'aoColumns': [{
+                'mData': 'name'
+            }, {
+                'mData': 'customer_name'
+            }, {
+                'mData': 'to_name'
+            }, {
+                'mData': 'to_tel'
+            }, {
+                'mData': 'express'
+            }, {
+                'mData': 'express_no'
+            }, {
+                'mData': 'status',
+                'mRender': statusRender,
+                'fnCreatedCell': function(nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
+            }, {
+                'mData': 'oid',
+                'mRender': descRender,
+                'fnCreatedCell': function(nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
+            }]
+        });
+    }
+
+    //渲染状态列
+    function statusRender(data, type, row) {
+        if (data == 1) {
+            return '<span class="badge bg-warning">待处理</span>';
+        } else if (data == 2) {
+            return '<span class="badge bg-success">已发货</span>';
+        }
+    }
+
+    //渲染操作列
+    function descRender(data, type, row) {
+        var str = '<a id="'
+                + data
+                + '" onclick="showActivity(this)" align="center" href="javascript:;" data-toggle="tooltip" title="编辑"><i class="icon-edit text-warning"></i></a>';
+        return  str;
+    }
+
+    // 异步获取table数据
+    function retrieveData(sSource, aoData, fnCallback) {
+        var row = 10;
+        var start = 0;
+        $.each(eval(aoData), function(i, field) {
+            if (field.name == 'iDisplayStart') {
+                start = field.value;
+            }
+            if (field.name == 'iDisplayLength') {
+                row = field.value;
+            }
+        });
+
+        var name = $('#q-name').val();
+        $.getJSON(sSource, {
+            start: start,
+            row: row,
+            name: name
+        }, function(rm) {
+            if (rm.code == 1) {
+                var data = rm.result;
+                if (!data.data) {
+                    data.data = [];
+                }
+                data.iTotalRecords = rm.result.total ? rm.result.total:0;
+                data.iTotalDisplayRecords = rm.result.total ? rm.result.total:0;
+                fnCallback(data);
+            } else {
+                yeshidenotify('error', 'top right', '查询失败！', '提示将在2秒内关闭', 2000);
+            }
+        });
+    }
+
+    //详情展示
+    function showActivity(v) {
+        var aid = $(v).attr('id');
+        $('#main-content').load('pages/activity/activity.html', function() {
+            $.getJSON('api/activities/'+aid, function(rm) {
+                if (rm.code == 1) {
+                    $('.panel-heading').text('编辑活动');
+
+                    var activity = rm.result;
+                    $('#aid').val(activity._id);
+                    $('#name').val(activity.name);
+                    $('#start_at').val(moment(activity.start_at).format('YYYY-MM-DD HH:mm:ss'));
+                    $('#end_at').val(moment(activity.end_at).format('YYYY-MM-DD HH:mm:ss'));
+                    var goods = activity.goods;
+                    var presentTemplate = $.templates('#present-template');
+                    var htmlOutput = presentTemplate.render(goods);
+                    $('#goods .present').remove();
+                    $('#goods').prepend(htmlOutput);
+                } else {
+                    yeshidenotify('error', 'top right', '详情获取失败！', '提示将在2秒内关闭', 2000);
+                }
+            });
+        });
+    }
+</script>

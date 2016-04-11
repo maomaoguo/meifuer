@@ -2,7 +2,7 @@
  * 订单bo
  * Created by duanying on 2016/4/9.
  */
-var mongoose = require('../../../db/db');
+var mongoose = require('../db/db');
 
 var orderSchema = mongoose.Schema({
     "no":String,//订单号
