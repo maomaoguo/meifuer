@@ -28,7 +28,7 @@ _privateFun.prsBO2VO = function(obj) {
             to_tel: ret.to_tel,
             op_id: ret.op_id,
             op_name: ret.op_name,
-            op_at: ret.op_at ? ret.op_at.getTime() : null,
+            //op_at: ret.op_at ? ret.op_at.getTime() : null,
             express: ret.express,
             express_no: ret.express_no,
             other: ret.other,
@@ -66,7 +66,7 @@ router.route('/')
         if (start) {
             options['skip'] = Number(start);
         }
-        options['sort'] = {status: -1, buy_at: 1};
+        options['sort'] = {status: 1, buy_at: 1};
 
         var page = new Page();
         Order.count(query, function(err, count) {
@@ -94,7 +94,9 @@ router.route('/')
     .post(function(req, res, next) { //新增
         var rm = new RestMsg();
 
-        var order = req.param('order');
+        var order = new Order();
+        order.name = req.param('name');
+        order.credit = Number(req.param('credit'));
         order.status = 1;
         order.buy_at = new Date();
         order.save(function(err, bo) {
