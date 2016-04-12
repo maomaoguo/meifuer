@@ -2,6 +2,7 @@
  * 留言 bo
  * Created by duanying on 2016/4/9.
  */
+var mongoose = require('../db/db');
 var messageSchema = mongoose.Schema({
     "mes_id":String,//留言人id
     "mes_name": String,//"留言人姓名,
@@ -12,8 +13,8 @@ var messageSchema = mongoose.Schema({
     "type":Number,//<类型>，1待处理，2已处理，3哦，知道了！，
     "op_note":String,//处理信息
     "op_at":Date,//处理时间
-});
+},{versionKey:false});
 
-var message = mongoose.model('messages', messageSchema);
+var message = mongoose.model('messages', messageSchema,'messages');
 
 module.exports = message;

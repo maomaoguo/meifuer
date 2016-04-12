@@ -19,8 +19,8 @@ var userSchema = mongoose.Schema({
     "status":Number,//<用户状态 0无效|1有效>,
     "creat_at":Date//<用户注册时间>
     
-});
+},{versionKey:false});
 
-var user = mongoose.model('users', userSchema);
+var user = mongoose.model('users', userSchema,'users');
 
 module.exports = user;

@@ -8,8 +8,8 @@ var productSchema = mongoose.Schema({
     "num": Number,//系列中的作品数
     "url":String,//封面图片路径
     "creat_at":Date//<时间>
-});
+},{versionKey:false});
 
-var product = mongoose.model('products', productSchema);
+var product = mongoose.model('products', productSchema,'products');
 
 module.exports = product;
