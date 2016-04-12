@@ -39,6 +39,49 @@ _privateFun.prsBO2VO = function(obj) {
     return result;
 }
 
+router.get('/mine', function (req, res, next) { //客户分页查询自己的订单
+    var rm = new RestMsg();
+
+    var query = {};
+    var uid = req.param('uid');
+    if (!uid) {
+        //TODO
+    }
+    var options = {'$slice':2};
+    var row = req.param('row');
+    var start = req.param('start');
+    if (row) {
+        options['limit'] = Number(row);
+    }
+    if (start) {
+        options['skip'] = Number(start);
+    }
+    options['sort'] = {buy_at: -1};
+
+    var page = new Page();
+    Order.count(query, function(err, count) {
+        if (err) {
+            rm.errorMsg(err);
+            res.send(rm);
+            return;
+        }
+        page.setPageAttr(count);
+        Order.find(query, null, options, function(err, ret) {
+            if (err) {
+                rm.errorMsg(err);
+                res.send(rm);
+                return;
+            }
+            if (ret!==null && ret.length>0) {
+                page.setData(ret.map(_privateFun.prsBO2VO));
+            }
+            rm.setResult(page);
+            rm.successMsg();
+            res.send(rm);
+        });
+    });
+});
+
 router.route('/')
     .get(function (req, res, next) { //分页查询
         var rm = new RestMsg();

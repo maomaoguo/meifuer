@@ -1,0 +1,213 @@
+<div class="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel">
+                <header class="panel-heading">我的兑换记录
+                    <button class="close close-sm" type="button" title="返回" onclick="loadMainPage('pages/order/gifts.html')">
+                        <i class="icon-reply"></i>
+                    </button>
+                </header>
+                <div class="panel-body">
+                    <div class="adv-table">
+                        <table id="orders-table" class="display table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>礼品名称</th>
+                                <th>消耗积分</th>
+                                <th>快递公司</th>
+                                <th>快递单号</th>
+                                <th>其他送货方式</th>
+                                <th>兑换时间</th>
+                                <th>处理时间</th>
+                                <th style="text-align: center;">状态</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //页面加载完成后执行
+    $(function() {
+        initTable();
+    });
+
+    //初始化table
+    function initTable() {
+        $('#orders-table').dataTable().fnDestroy();
+
+        $('#orders-table').dataTable({
+            'bProcessing': false,
+            'bServerSide': true,
+            'sAjaxSource': 'api/orders',
+            'fnServerData': retrieveData,
+            'bDestroy': true,
+            'bRetrieve': true,
+            'sAjaxDataProp': 'data',
+            'iDisplayLength': 10,
+            'bFilter': false,
+            'bLengthChange': false,
+            'bAutoWidth': false,
+            'bSort': false,
+            'aoColumns': [{
+                'mData': 'name'
+            }, {
+                'mData': 'credit'
+            }, {
+                'mData': 'express',
+                'mRender': expressRender
+            }, {
+                'mData': 'express_no',
+                'mRender': expressRender
+            }, {
+                'mData': 'other',
+                'mRender': expressRender
+            }, {
+                'mData': 'buy_at',
+                'mRender': dateRender
+            }, {
+                'mData': 'op_at',
+                'mRender': dateRender
+            }, {
+                'mData': 'status',
+                'mRender': statusRender,
+                'fnCreatedCell': function(nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
+            }]
+        });
+    }
+
+    //渲染快递信息列
+    function expressRender(data) {
+        return data ? data : '--';
+    }
+
+    //渲染时间列
+    function dateRender(data) {
+        return data ? moment(data).format('YYYY-MM-DD HH:mm:ss') : '--';
+    }
+
+    //渲染状态列
+    function statusRender(data, type, row) {
+        if (data == 1) {
+            return '<span class="badge bg-warning">待处理</span>';
+        } else if (data == 2) {
+            return '<span class="badge bg-success">已发货</span>';
+        }
+    }
+
+    //渲染操作列
+    function descRender(data, type, row) {
+        var str = '<a id="'
+                + data
+                + '" onclick="showOrder(this)" align="center" href="javascript:;" data-toggle="tooltip" title="详情"><i class="icon-file-text text-primary"></i></a>&nbsp;&nbsp;';
+        if (row.status == 1) {
+            str += '<a id="'
+                + data
+                + '" onclick="dealOrder(this)" align="center" href="javascript:;" data-toggle="tooltip" title="处理"><i class="icon-edit text-warning"></i></a>';
+        }
+        return  str;
+    }
+
+    //异步获取table数据
+    function retrieveData(sSource, aoData, fnCallback) {
+        var row = 10;
+        var start = 0;
+        $.each(eval(aoData), function(i, field) {
+            if (field.name == 'iDisplayStart') {
+                start = field.value;
+            }
+            if (field.name == 'iDisplayLength') {
+                row = field.value;
+            }
+        });
+
+        var name = $('#q-name').val();
+        $.getJSON(sSource, {
+            start: start,
+            row: row,
+            name: name
+        }, function(rm) {
+            if (rm.code == 1) {
+                var data = rm.result;
+                if (!data.data) {
+                    data.data = [];
+                }
+                data.iTotalRecords = rm.result.total ? rm.result.total:0;
+                data.iTotalDisplayRecords = rm.result.total ? rm.result.total:0;
+                fnCallback(data);
+            } else {
+                yeshidenotify('error', 'top right', '查询失败！', '提示将在2秒内关闭', 2000);
+            }
+        });
+    }
+
+    //详情展示
+    function showOrder(v) {
+        var oid = $(v).attr('id');
+        $.getJSON('api/orders/'+oid, function(rm) {
+            if (rm.code == 1) {
+                var order = rm.result;
+                for (var key in order) {
+                    if (key == 'buy_at') {
+                        $('#buy_at').val(moment(order.buy_at).format('YYYY-MM-DD HH:mm:ss'));
+                    } else if (key == 'op_at') {
+                        $('#op_at').val(moment(order.op_at).format('YYYY-MM-DD HH:mm:ss'));
+                    } else {
+                        $('#'+key).val(order[key]);
+                    }
+                }
+                $('#detailModal').modal({backdrop: 'static'});
+                $('#detailModal').modal('show');
+            } else {
+                yeshidenotify('error', 'top right', '详情获取失败！', '提示将在2秒内关闭', 2000);
+            }
+        });
+    }
+
+    //处理订单
+    function dealOrder(v) {
+        if (v) {
+            $('#deal-oid').val($(v).attr('id'));
+        } else {
+            $('#deal-oid').val($('#_id').val());
+            $('#detailModal').modal('hide');
+        }
+        $('#dealModal').modal({backdrop: 'static'});
+        $('#dealModal').modal('show');
+    }
+
+    //保存处理信息
+    function saveOrder() {
+        var express = $('#deal-express').val();
+        var express_no = $('#deal-no').val();
+        var other = $('#deal-other').val();
+
+        $.ajax({
+            type: 'PUT',
+            url: 'api/orders/' + $('#deal-oid').val(),
+            data: {
+                express: express,
+                express_no: express_no,
+                other: other
+            },
+            dataType: 'json',
+            success: function(rm) {
+                if (rm.code == 1) {
+                    $('#dealModal').modal('hide');
+                    yeshidenotify('success', 'top right', '处理成功！', '提示将在2秒内关闭', 2000);
+                    initTable();
+                } else {
+                    yeshidenotify('error', 'top right', '处理失败！', '提示将在2秒内关闭', 2000);
+                }
+            }
+        });
+    }
+</script>
