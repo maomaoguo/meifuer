@@ -29,8 +29,38 @@ _privateFun.prsBO2VO = function(obj) {
     return result;
 }
 
+router.get('/active', function(req, res, next) { //客户端--活动礼品列表查询
+    var rm = new RestMsg();
+
+    var credit = req.param('credit');
+    Activity.find({start_at: {$lt: new Date()}, end_at: {$gt: new Date()}}, function(err, ret) {
+        if (err) {
+            rm.errorMsg(err);
+            res.send(rm);
+            return;
+        }
+        if (ret!==null && ret.length) {
+            var activity = ret[0];
+            var goods = activity.goods;
+            if (goods!=null && goods.length) {
+                for (var i=0; i<goods.length; i++) {
+                    if (goods[i].credit <= credit) {
+                        goods[i].state = true;
+                    } else {
+                        goods[i].state = false;
+                        goods[i].diff = Number(goods[i].credit)-Number(credit);
+                    }
+                }
+            }
+            rm.setResult(activity);
+        }
+        rm.successMsg();
+        res.send(rm);
+    });
+});
+
 router.route('/')
-    .get(function (req, res, next) { //分页查询
+    .get(function (req, res, next) { //管理端--分页查询
         var rm = new RestMsg();
 
         var query = {};
@@ -73,7 +103,7 @@ router.route('/')
             });
         });
     })
-    .post(function(req, res, next) { //新增
+    .post(function(req, res, next) { //管理端--新增
         var rm = new RestMsg();
 
         var name = req.param('name');
@@ -223,7 +253,7 @@ router.route('/')
     });
 
 router.route('/:aid')
-    .get(function(req, res, next) { //获取详情
+    .get(function(req, res, next) { //管理端--获取详情
         var rm = new RestMsg();
 
         Activity.findById(req.params.aid, function(err, bo) {
@@ -237,7 +267,7 @@ router.route('/:aid')
             res.send(rm);
         });
     })
-    .post(function(req, res, next) { //更新
+    .post(function(req, res, next) { //管理端--更新
         var rm = new RestMsg();
 
         var aid = req.params.aid;
