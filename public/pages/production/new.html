@@ -2,235 +2,58 @@
 <html lang="zh-CN">
 <head>
 	<meta charset="utf-8">
-	<title>作品管理--作品新增or详情or修改页面</title>
-	<style type="text/css">
-		fieldset {
-			padding: 10px;
-			border: 1px solid #d5dae0;
-			border-radius: 4px;
-		}
-		legend {
-			margin-bottom: 0;
-			padding: 0;
-			border-style: none;
-			width: auto;
-		}
-	</style>
-	<link href="assets/dropzone/css/dropzone.css" rel="stylesheet"/>
-</head>
-
+	<title>美福尔管理平台</title>
 <body>
-	<section class="wrapper">
-		<!-- page start-->
-		<div class="row">
-			<div class="col-lg-12">
-				<section class="panel">
-					<header class="panel-heading"  style="color: #a9d86e">
-						<i class="icon-edit"></i> 新增作品
-					</header>
-					
-					<div class="panel-body">
-						<form class="form-horizontal" id="default">
-							<div class="col-lg-12">
-								<div class="col-lg-6">
-									<fieldset style="border-color: #ff6c60;">
-										<legend style="color: #ff6c60;">&nbsp;<i class="icon-exclamation-sign"></i>必输信息</legend>
-										<div class="col-lg-6">
-											<div class="form-group">
-												<label class="col-lg-12">作品等级</label>
-												<div class="radios col-lg-6">
-													<label class="label_radio r_off" for="level-1">
-														<input id="level-1" type="radio" value="1" checked name="level">普通作品
-													</label>
-												</div>
-												<div class="radios col-lg-6">
-													<label class="label_radio r_off" for="level-2">
-														<input id="level-2" type="radio" value="2" name="level">会员专享
-													</label>
-												</div>
-											</div>
-											<div class="form-group">
-												<label class="col-lg-12">作品类型</label>
-												<div class="radios col-lg-6">
-													<label class="label_radio r_off" for="type-1">
-														<input id="type-1" type="radio" value="1" checked name="type">男装
-													</label>
-													<label class="label_radio r_off" for="type-3">
-														<input id="type-3" type="radio" value="3" name="type">图案
-													</label>
-												</div>
-												<div class="radios col-lg-6">
-													<label class="label_radio r_off" for="type-2">
-														<input id="type-2" type="radio" value="2" name="type">女装
-													</label>
-													<label class="label_radio r_off" for="type-4">
-														<input id="type-4" type="radio" value="4" name="type">其他
-													</label>
-												</div>
-											</div>
-										</div>
-										<div class="col-lg-6">
-											<div class="form-group">
-												<label class="col-lg-12">主题图片</label>
-												<div class="col-lg-12">
-													<input id="titleImg" name="titleImg" style="display: none">
-													<div style="border-color: #d5dae0;box-shadow: 0 1px 1px rgba(0, 0, 0, 0);border-radius: 4px;height: 170px;border: 1px solid #d5dae0;padding: 0px;text-align: right;">
-														<button class="btn btn-xs btn-warning" type="button" onclick="javascript:$('#img').trigger('click');">
-															<i class="icon-picture"></i> 选择
-														</button>
-														<button class="btn btn-xs btn-danger" type="button" onclick="removeImg();">
-															<i class="icon-eraser"></i> 移除
-														</button>
-													</div>
-													<img id="minImg" class="img-responsive" alt="" src="" >
-												</div>
-											</div>
-										</div>
-									</fieldset>
-								</div>
-									
-								<div class="col-lg-6">
-									<fieldset style="border-color: #58c9f3;">
-										<legend style="color: #58c9f3;">&nbsp;<i class="icon-smile"></i>可选信息</legend>
-										<div class="col-lg-6" style="padding-right: 30px">
-											<div class="form-group">
-												<label for="title">主题</label>
-												<input id="title" name="title" type="text" class="form-control input-sm" placeholder="主题">
-											</div>
-											<div class="form-group">
-												<label for="description">描述</label>
-												<textarea rows="4" id="description" name="description" class="form-control input-sm" placeholder="描述"></textarea>
-											</div>
-										</div>
-										<div class="col-lg-6">
-											<div class="form-group">
-												<label for="author">设计师</label>
-												<input id="author" name="author" type="text" class="form-control input-sm" placeholder="设计师">
-											</div>
-											<div class="form-group">
-												<label for="note">备注</label>
-												<textarea rows="4" id="note" name="note" class="form-control input-sm" placeholder="备注"></textarea>
-											</div>
-										</div>
-									</fieldset>
+<div class="wrapper">
+	<div class="row">
+		<div class="col-md-12">
+			<section class="panel">
+				<header class="panel-heading">
+					新增商品
+				</header>
+				<div class="panel-body">
+					<form  class="form-horizontal tasi-form">
+						<div class="form-group">
+							<label for="name" class="col-md-2 control-label">相册名称</label>
+							<div class="col-md-10">
+								<input type="text" class="form-control" id="name" placeholder="相册名称">
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="desc" class="col-md-2 control-label">描述</label>
+							<div class="col-md-10">
+								<textarea type="text" class="form-control" id="desc" placeholder="描述"></textarea>
+							</div>
+						</div>
+						<div class="form-group last">
+							<label class="control-label col-md-2">选择图片</label>
+
+							<div class="col-md-10">
+								<div class="fileupload fileupload-new" data-provides="fileupload">
+									<div class="fileupload-new thumbnail" style="width: 200px; height: 150px;">
+										<img src="http://www.placehold.it/200x150/EFEFEF/AAAAAA&amp;text=no+image"
+											 alt=""/>
+									</div>
+									<div class="fileupload-preview fileupload-exists thumbnail" style="max-width: 200px; max-height: 150px; line-height: 20px;"></div>
+									<div>
+                                       <span class="btn btn-white btn-file">
+                                       <span class="fileupload-new"><i class="icon-paper-clip"></i>选择图片</span>
+                                           <input type="file" class="default"/>
+                                       </span>
+										<a href="#" class="btn btn-danger fileupload-exists" data-dismiss="fileupload"><i class="icon-trash"></i>移除图片</a>
+									</div>
 								</div>
 							</div>
-							
-							<label class="col-lg-12" style="margin: 15px 0 5px 15px">作品大图</label>
-							<div class="dropzone" style="margin:0 30px"></div>
-                    <script>
-                       	$('.dropzone').dropzone({
-				url: 'api/productions/addImg',
-				maxFilesize: 512,
-				maxFiles: 20,
-				addRemoveLinks: true,
-				acceptedFiles: '.jpg, .png, .gif',
-				uploadMultiple: false,//TODO
-				
-				dictDefaultMessage: '通过拖拽或者单击的方式添加图片！',
-				dictInvalidInputType: '该文件不是图片！',
-				dictFileTooBig: '文件大小不超过512M！',
-				dictCancelUpload: '取消上传链接的文本',
-				dictCancelUploadConfirmation: '取消上传确认信息的文本',
-				dictRemoveFile: '移除文件链接的文本',
-				dictMaxFilesExceeded: '超过最大文件数量的提示文本',
-				
-				success: function(file, rm) {
-					alert(rm.msg);
-				}
-			});
-		</script>
-							
-							<button class="btn btn-sm btn-primary pull-right" style="margin: 10px 30px 0 0"><i class="icon-save"></i> 保存</button>
-						</form>
-					</div>
-				</section>
-			</div>
-		</div><!-- page end-->
-	</section>
-	
-	<form id="file" hidden="" enctype="multipart/form-data" action="api/productions/addImg" method="post">
-		<input type="file" id="img"  name="imgfile" style="visibility:hidden" onchange="uploadImg()">
-	</form>
-
-		<script>
-		
-		//图片上传
-		function uploadImg(){
-			$('button').attr('disabled', true);
-			$('#file').ajaxSubmit({
-				type: 'POST',
-				url: 'api/productions/addImg',
-				dataType: 'json',
-				success: function(data) {
-					if(data.code == 1){
-						$('#minImg').attr('src', data.result.minImg);
-						$('#minImg').attr('href', data.result.img);
-						$('#titleImg').val(data.result.minImg);
-					} else {
-						yeshidenotify('error', 'middle center', '图片上传失败！', '提示框将在3秒内关闭', 3000);
-					}
-				}
-			});
-			$('button').attr('disabled', false);
-		}
-		
-		//移除图片
-		function removeImg(){
-			var minFilepath = $("#titleImg").val();
-			if(minFilepath.indexOf("/cache/")>-1){
-				$.post("api/plates/deleteImg", {
-					minFilepath : minFilepath
-				}, function(result) {
-					if (result.code == -1) {
-						jAlert(msg.msg, "提示");
-					} else {
-						$('#minImg').attr("src","");
-						$("#titleImg").val("");
-					}
-				});
-			}else{
-				$('#minImg').attr("src","");
-				$("#titleImg").val("");
-			}
-		}
-  
-		// 保存作品
-		function save() {
-// 			var level = $('input[name="level"]:checked').val();
-			var level = 1;
-			var type = $('#type').val();
-// 			var url = $('#url').val();
-			var url = 'tempimages/cache/titleimgs/13ead66c-63fc-47f7-836f-0c728b8501b8.png';
-			$.ajax({
-				type: 'POST',
-				url: 'api/productions',
-				dataType: 'json',
-				data: {
-					level: level,
-					type: type,
-					url: url
-				},
-				success: function(rm) {
-					if (rm.code == 1) {
-	    	    		yeshidenotify('success', 'middle center', rm.msg, '提示框将在3秒内关闭', 3000);
-// 	    	    		reset();
-	    	    	} else {
-	    	    		yeshidenotify('error', 'middle center', rm.msg, '提示框将在3秒内关闭', 3000);
-	    	    	}
-				}
-			});
-		}
-
-		 $(function() {
-		    $('#default').stepy({
-		        backLabel: 'Previous',
-		        block: true,
-		        nextLabel: 'Next',
-		        titleClick: true,
-		        titleTarget: '.stepy-tab'
-		    });
-		}); 
-	</script>
+						</div>
+						<div class="form-group pull-right" style="padding: 0 15px;">
+							<button type="button" class="btn btn-success" onclick="">保存</button>
+							<button type="button" class="btn btn-warning" onclick="">取消</button>
+						</div>
+					</form>
+				</div>
+			</section>
+		</div>
+	</div>
+</div>
 </body>
 </html>
