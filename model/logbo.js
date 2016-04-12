@@ -15,8 +15,8 @@ var logSchema = mongoose.Schema({
     "credit":Number,//操作后积分
     "desc":String,//日志描述
     "creat_at":Date//<时间>
-});
+},{versionKey:false});
 
-var log = mongoose.model('logs', logSchema);
+var log = mongoose.model('logs', logSchema,'logs');
 
 module.exports = log;

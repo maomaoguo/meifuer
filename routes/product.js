@@ -72,12 +72,12 @@ router.route('/')
         });
     })
 
-    .post(function(req,res,next){
+    .post(function(req,res,next){//管理端图片新增
         var rm = new RestMsg();
 
         var name = req.param('name');
         if(!name){
-            rm.errorMsg('����������!');
+            rm.errorMsg('请输入名称!');
             res.send(restmsg);
             return;
         }

@@ -18,8 +18,8 @@ var activitySchema = mongoose.Schema({
      * "total":Number,//总数量
      */
     "create_at":Date//<时间>
-});
+},{versionKey:false});
 
-var activity = mongoose.model('activities', activitySchema);
+var activity = mongoose.model('activities', activitySchema,'activities');
 
 module.exports = activity;

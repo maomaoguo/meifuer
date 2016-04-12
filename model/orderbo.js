@@ -22,8 +22,8 @@ var orderSchema = mongoose.Schema({
     "status":Number,//<订单状态 1待发货，2已发货>,
     "buy_at":Date//<兑换时间>
 
-});
+},{versionKey:false});
 
-var order = mongoose.model('orders', orderSchema);
+var order = mongoose.model('orders', orderSchema,'orders');
 
 module.exports = order;

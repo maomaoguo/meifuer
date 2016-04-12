@@ -1,0 +1,119 @@
+<div class="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel">
+                <header class="panel-heading">
+                    <form class="form-inline" role="form">
+                        <div class="form-group">
+                            <input type="text" id="q-name" class="form-control" placeholder="操作人">
+                        </div>
+                        <button type="button" class="btn btn-info" onclick="initTable()">查询</button>
+                        <button type="reset" class="btn btn-warning">重置</button>
+                    </form>
+                </header>
+                <div class="panel-body">
+                    <div class="adv-table">
+                        <table id="logs-table" class="display table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th style="text-align: center;">操作人</th>
+                                <th style="text-align: center;">被操作人</th>
+                                <th style="text-align: center;">类型</th>
+                                <th style="text-align: center;">积分</th>
+                                <th style="text-align: center;">描述</th>
+                                <th style="text-align: center;">日期</th>
+                                <th style="text-align: center;">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    //页面加载完成后执行
+    $(function() {
+        initTable();
+    });
+
+    //初始化table
+    function initTable() {
+        $('#logs-table').dataTable().fnDestroy();
+
+        $('#logs-table').dataTable({
+            'bProcessing': false,
+            'bServerSide': true,
+            'sAjaxSource': 'api/logs',
+            'fnServerData': retrieveData,
+            'bDestroy': true,
+            'bRetrieve': true,
+            'sAjaxDataProp': 'data',
+            'iDisplayLength': 10,
+            'bFilter': false,
+            'bLengthChange': false,
+            'bAutoWidth': false,
+            'bSort': false,
+            'aoColumns': [{
+                'mData': 'name'
+            }, {
+                'mData': 'customer_name'
+            }, {
+                'mData': 'cname'
+            }, {
+                'mData': 'type'
+            }, {
+                'mData': 'credit'
+            }, {
+                'mData': 'desc'
+            },{
+                'mData': 'create_at'
+            }, {
+                'mData': 'id',
+                'fnCreatedCell': function(nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
+            }],
+            "oLanguage" : {
+                "sUrl" : "conf/de_DE.txt"
+            }
+        });
+    }
+
+    // 异步获取table数据
+    function retrieveData(sSource, aoData, fnCallback) {
+        var row = 10;
+        var start = 0;
+        $.each(eval(aoData), function(i, field) {
+            if (field.name == 'iDisplayStart') {
+                start = field.value;
+            }
+            if (field.name == 'iDisplayLength') {
+                row = field.value;
+            }
+        });
+
+        var name = $('#q-name').val();
+        $.getJSON(sSource, {
+            start: start,
+            row: row,
+            name: name
+        }, function(rm) {
+            if (rm.code == 1) {
+                var data = rm.result;
+                if (!data.data) {
+                    data.data = [];
+                }
+                data.iTotalRecords = rm.result.total ? rm.result.total:0;
+                data.iTotalDisplayRecords = rm.result.total ? rm.result.total:0;
+                fnCallback(data);
+            } else {
+                yeshidenotify('error', 'top right', '查询失败！', '提示将在2秒内关闭', 2000);
+            }
+        });
+    }
+</script>
