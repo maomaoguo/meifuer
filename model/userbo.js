@@ -17,8 +17,8 @@ var userSchema = mongoose.Schema({
     "credit":Number,//积分
     "desc": String,//"<用户描述>",
     "status":Number,//<用户状态 0无效|1有效>,
+    "salesman":String,//业务员
     "creat_at":Date//<用户注册时间>
-    
 });
 
 var user = mongoose.model('users', userSchema);
