@@ -1,18 +1,48 @@
 <style>
-    .adtocart {
-        left: 41%;
+    .state-overview .symbol {
+        padding: 15px;
     }
-    .text-grey {
-        background-color: #ccc;
+    .state-overview .value {
+        padding-top: 13px;
     }
     .panel-heading h3 {
         font-size: 16px;
     }
-    .credit {
-        font-size: 26px;
-        color: #a9d86e;
+    .state-overview .value h1 {
+        color: #57c8f2;
+    }
+    .alert {
+        padding: 17px 15px;
+    }
+    .product-list .panel {
+        background-color: #f1f2f7;
+        margin-bottom: 0;
+    }
+    .adtocart {
+        left: 39.5%;
+    }
+    .text-grey {
+        background-color: #ccc;
     }
 </style>
+
+<link href="assets/fancybox/source/jquery.fancybox.css" rel="stylesheet" />
+<link rel="stylesheet" type="text/css" href="css/gallery.css" />
+
+<script id="order-template" type="text/x-jsrender">
+    <tr>
+        <td>{{:name}}</td>
+        <td style="text-align: right;"><span class="text-danger">-{{:credit}}</span></td>
+        <td style="text-align: center;">
+            {{if status==1}}
+            <span class="text-warning">待处理</span>
+            {{else}}
+            <span class="text-success">已发货</span>
+            {{/if}}
+        </td>
+        <td style="text-align: center;">{{:buy_at}}</td>
+    </tr>
+</script>
 
 <script id="gift-template" type="text/x-jsrender">
     <div class="col-md-3">
@@ -40,58 +70,94 @@
 <section class="wrapper">
     <div class="row">
         <div class="col-md-3">
-            <section class="panel">
-                <div class="panel-heading">
-                    <h3>我的积分 <span class="credit">2560</span></h3>
+            <section class="panel state-overview">
+                <div class="symbol blue">
+                    <i class="icon-ticket"></i>
                 </div>
+                <div class="value">
+                    <h1 class="count">0</h1>
+                    <p>我的积分</p>
+                </div>
+            </section>
+            <section class="panel">
                 <div class="panel-body">
-                    <h5>积分兑换规则：</h5>
+                    <h5><strong>积分兑换规则：</strong></h5>
                     <p>1. 凡活动期间，我公司注册客户均可凭账户积分兑换相应礼品。</p>
                     <p>2. 各类礼品均有数量限制，只有账户积分不少于礼品消耗积分且礼品有余量时，方能兑换该类礼品，先到先得。</p>
                     <p>3. 兑换礼品成功后，系统会即时扣除相应数量的账户积分，工作人员会在两个工作日内为您安排发货，并于发货后与您联系并告知发货信息。</p>
                     <p>4. 一旦兑换成功，系统会即时生成订单，您将无法取消或者更换礼品，请谨慎操作！</p>
+                    <a href="javascript:;" class="pull-right" onclick="loadMainPage('pages/order/my_orders.html')">如何获取积分？</a>
                 </div>
             </section>
             <section class="panel">
-                <div class="panel-heading">
-                    <h3>我的兑换记录</h3>
-                </div>
                 <div class="panel-body">
-                    <table id="exchange-table" class="table table-striped table-advance table-hover">
+                    <h5>
+                        <strong>我的兑换记录：</strong>
+                    </h5>
+                    <table id="exchange-table" class="table table-striped table-advance table-hover" style="margin-bottom: 0;">
                         <thead>
-                        <tr>
-                            <th>礼品</th>
-                            <th style="text-align: right;">积分</th>
-                            <th style="text-align: center;">状态</th>
-                            <th style="text-align: center;">兑换时间</th>
-                        </tr>
+                            <tr>
+                                <th>礼品</th>
+                                <th style="text-align: right;">积分</th>
+                                <th style="text-align: center;">状态</th>
+                                <th style="text-align: center;">兑换时间</th>
+                            </tr>
                         </thead>
                         <tbody></tbody>
                     </table>
-                </div>
-                <div class="panel-footer">
-                    <a href="javascript:;" class="pull-right" onclick="loadMainPage('pages/order/my_orders.html')">更多...</a>
+                    <a href="javascript:;" class="pull-right" onclick="showMyOrders()">更多...</a>
                 </div>
             </section>
         </div>
         <div class="col-md-9">
-            <section class="panel" id="tip-panel">
+            <div class="alert alert-info alert-block fade in">
+                <button class="close close-sm" type="button" title="返回首页">
+                    <i class="icon-reply"></i>
+                </button>
+                <h4>
+                    <i class="icon-coffee"></i>
+                    感谢您的关注！
+                </h4>
+                <p>现在没有积分兑换活动哦，请您多多留意网站首页活动信息，期待下一波福利吧……</p>
+            </div>
+
+            <section id="gifts"  class="panel">
                 <div class="panel-body">
-                    <div class="alert alert-info alert-block fade in">
-                        <button class="close close-sm" type="button" title="返回首页">
-                            <i class="icon-reply"></i>
-                        </button>
-                        <h4>
-                            <i class="icon-coffee"></i>
-                            感谢您的关注！
-                        </h4>
-                        <p>现在没有积分兑换活动哦，请您多多留意网站首页活动信息，期待下一波福利吧……</p>
+                    <div class="row product-list">
+                        <!-- 礼品列表 -->
                     </div>
                 </div>
             </section>
+        </div>
+    </div>
 
-            <div id="gifts" class="row product-list">
-                <!-- 礼品列表 -->
+    <div id="my-orders" class="row">
+        <div class="col-lg-12">
+            <div class="panel">
+                <header class="panel-heading">我的兑换记录
+                    <button class="close close-sm" type="button" title="返回" onclick="showGifts()">
+                        <i class="icon-reply"></i>
+                    </button>
+                </header>
+                <div class="panel-body">
+                    <div class="adv-table">
+                        <table id="orders-table" class="display table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>礼品名称</th>
+                                <th>消耗积分</th>
+                                <th>快递公司</th>
+                                <th>快递单号</th>
+                                <th>其他送货方式</th>
+                                <th>兑换时间</th>
+                                <th>处理时间</th>
+                                <th style="text-align: center;">状态</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -101,15 +167,64 @@
 
     //页面加载完成后执行
     $(function() {
-        initExchangeTable();
+        countUp(customer.credit);
+        getMyOrders();
+        initOrdersTabel();
         getGifts();
     });
 
-    //初始化兑换记录表格
-    function initExchangeTable() {
-        $('#exchange-table').dataTable().fnDestroy();
+    //积分动态增长
+    function countUp(count) {
+        var div_by = 100,
+                speed = Math.floor(count / div_by),
+                $display = $('.count'),
+                run_count = 1,
+                int_speed = 5;
 
-        $('#exchange-table').dataTable({
+        var int = setInterval(function() {
+            if(run_count < div_by){
+                $display.text(speed * run_count);
+                run_count++;
+            } else if(parseInt($display.text()) < count) {
+                var curr_count = parseInt($display.text()) + 1;
+                $display.text(curr_count);
+            } else {
+                clearInterval(int);
+            }
+        }, int_speed);
+    }
+
+    //初始化兑换记录表格
+    function getMyOrders() {
+        $.getJSON('api/orders/mine', {
+            start: 0,
+            row: 8,
+            uid: customer.uid
+        }, function(rm) {
+            if (rm.code == 1) {
+                var data = rm.result.data;
+                if (data.length) {
+                    for (var i=0; i<data.length; i++) {
+                        data[i].buy_at = moment(data[i].buy_at).format('YYYY-MM-DD');
+                    }
+                    var orderTemplate = $.templates('#order-template');
+                    var htmlOutput = orderTemplate.render(data);
+                    $('#exchange-table tbody').html(htmlOutput);
+                }
+            }
+        });
+    }
+
+    //展示兑换记录
+    function showMyOrders() {
+        $('#my-orders').prev().hide();
+        $('#my-orders').show();
+    }
+
+    //初始化客户订单表格
+    function initOrdersTabel() {
+        $('#orders-table').dataTable().fnDestroy();
+        $('#orders-table').dataTable({
             'bProcessing': false,
             'bServerSide': true,
             'sAjaxSource': 'api/orders/mine',
@@ -117,7 +232,7 @@
             'bDestroy': true,
             'bRetrieve': true,
             'sAjaxDataProp': 'data',
-            'iDisplayLength': 5,
+            'iDisplayLength': 10,
             'bFilter': false,
             'bLengthChange': false,
             'bAutoWidth': false,
@@ -125,34 +240,49 @@
             'aoColumns': [{
                 'mData': 'name'
             }, {
-                'mData': 'credit',
-                'mRender': creditRender
+                'mData': 'credit'
             }, {
-                'mData': 'status',
-                'mRender': statusRender
+                'mData': 'express',
+                'mRender': expressRender
+            }, {
+                'mData': 'express_no',
+                'mRender': expressRender
+            }, {
+                'mData': 'other',
+                'mRender': expressRender
             }, {
                 'mData': 'buy_at',
                 'mRender': dateRender
+            }, {
+                'mData': 'op_at',
+                'mRender': dateRender
+            }, {
+                'mData': 'status',
+                'mRender': statusRender,
+                'fnCreatedCell': function(nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
             }]
         });
+        $('#my-orders').hide();
     }
 
-    //渲染积分列
-    function creditRender(data) {
-        return '<span class="text-danger">-'+data+'</span>';
+    //渲染快递信息列
+    function expressRender(data) {
+        return data ? data : '--';
     }
 
-    //渲染兑换时间列
+    //渲染时间列
     function dateRender(data) {
-        return moment(data).format('YYYY-MM-DD HH:mm:ss');
+        return data ? moment(data).format('YYYY-MM-DD HH:mm:ss') : '--';
     }
 
     //渲染状态列
     function statusRender(data, type, row) {
         if (data == 1) {
-            return '<span class="text-warning">待处理</span>';
+            return '<span class="badge bg-warning">待处理</span>';
         } else if (data == 2) {
-            return '<span class="text-success">已发货</span>';
+            return '<span class="badge bg-success">已发货</span>';
         }
     }
 
@@ -172,7 +302,7 @@
         $.getJSON(sSource, {
             start: start,
             row: row,
-            uid: ''
+            uid: customer.uid
         }, function(rm) {
             if (rm.code == 1) {
                 var data = rm.result;
@@ -182,21 +312,33 @@
                 data.iTotalRecords = rm.result.total ? rm.result.total:0;
                 data.iTotalDisplayRecords = rm.result.total ? rm.result.total:0;
                 fnCallback(data);
+            } else {
+                yeshidenotify('error', 'top right', '查询失败！', '提示将在2秒内关闭', 2000);
             }
         });
     }
 
+    //返回礼品兑换界面
+    function showGifts() {
+        $('#my-orders').hide();
+        $('#my-orders').prev().show();
+    }
+
     //获取活动礼品列表
     function getGifts() {
-        $.getJSON('api/activities/active', {credit: 2560}, function(rm) {
+        $.getJSON('api/activities/active', {credit: customer.credit}, function(rm) {
             if (rm.code == 1) {
                 if (rm.result.goods) {
-                    $('#tip-panel').hide();
+                    $('.alert').hide();
+                    $('#gifts').show();
                     var gifts = rm.result.goods;
                     var giftTemplate = $.templates('#gift-template');
                     var htmlOutput = giftTemplate.render(gifts);
-                    $('#gifts').html(htmlOutput);
+                    $('#gifts .product-list').html(htmlOutput);
                     $('.popovers').popover();
+                } else {
+                    $('.alert').show();
+                    $('#gifts').hide();
                 }
             }
         });
@@ -206,13 +348,15 @@
     function exchange(giftName, giftCredit) {
         confirm('cool', 'middle center', '提示！', '确定兑换该礼品？兑换后将无法取消！', function() {
             $.post('api/orders', {
-                uid: 1,
+                uid: '570e5091a32ab6a1dad90ead',
                 name: giftName,
                 credit: giftCredit
             }, function(rm) {
                 if (rm.code == 1 ) {
                     yeshidenotify('success', 'top right', '兑换成功！我们将尽快为您发货。', '提示将在2秒内关闭', 2000);
-                    initExchangeTable();
+                    countUp(customer.credit);
+                    getMyOrders();
+                    initOrdersTabel();
                     getGifts();
                 }
             }, 'json');

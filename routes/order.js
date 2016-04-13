@@ -10,6 +10,7 @@ var fs = require('fs');
 var RestMsg = require('../common/restmsg');
 var Page = require('../common/page');
 var Order = require('../model/orderbo');
+var User = require('../model/userbo');
 
 var _privateFun = router.prototype
 
@@ -42,10 +43,11 @@ _privateFun.prsBO2VO = function(obj) {
 router.get('/mine', function (req, res, next) { //客户分页查询自己的订单
     var rm = new RestMsg();
 
-    var query = {};
     var uid = req.param('uid');
     if (!uid) {
-        //TODO
+        rm.errorMsg('未获取到您的信息！');
+        res.send(rm);
+        return;
     }
     var options = {'$slice':2};
     var row = req.param('row');
@@ -59,14 +61,14 @@ router.get('/mine', function (req, res, next) { //客户分页查询自己的订
     options['sort'] = {buy_at: -1};
 
     var page = new Page();
-    Order.count(query, function(err, count) {
+    Order.count({customer_id: uid}, function(err, count) {
         if (err) {
             rm.errorMsg(err);
             res.send(rm);
             return;
         }
         page.setPageAttr(count);
-        Order.find(query, null, options, function(err, ret) {
+        Order.find({customer_id: uid}, null, options, function(err, ret) {
             if (err) {
                 rm.errorMsg(err);
                 res.send(rm);
@@ -137,19 +139,32 @@ router.route('/')
     .post(function(req, res, next) { //新增
         var rm = new RestMsg();
 
-        var order = new Order();
-        order.name = req.param('name');
-        order.credit = Number(req.param('credit'));
-        order.status = 1;
-        order.buy_at = new Date();
-        order.save(function(err, bo) {
+        var uid = req.param('uid');
+        User.findById(uid, function(err, user) {
             if (err) {
                 rm.errorMsg(err);
                 res.send(rm);
                 return;
             }
-            rm.successMsg();
-            res.send(rm);
+            var order = new Order();
+            order.customer_id = uid;
+            order.customer_name = user.name;
+            order.to_name = user.contact;
+            order.to_tel = user.tel;
+            order.to_addr = user.addr;
+            order.name = req.param('name');
+            order.credit = Number(req.param('credit'));
+            order.status = 1;
+            order.buy_at = new Date();
+            order.save(function(err, bo) {
+                if (err) {
+                    rm.errorMsg(err);
+                    res.send(rm);
+                    return;
+                }
+                rm.successMsg();
+                res.send(rm);
+            });
         });
     });
 
