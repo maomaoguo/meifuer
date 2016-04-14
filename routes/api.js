@@ -20,6 +20,7 @@ var message = require('./message');
 
 router.use('/users', user);
 router.use('/activities', activity);
+router.use('/orders', order);
 router.use('/products', product);
 router.use('/logs', log);
 router.use('/messages', message);
