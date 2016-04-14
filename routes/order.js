@@ -10,6 +10,7 @@ var fs = require('fs');
 var RestMsg = require('../common/restmsg');
 var Page = require('../common/page');
 var Order = require('../model/orderbo');
+var User = require('../model/userbo');
 
 var _privateFun = router.prototype
 
@@ -26,18 +27,62 @@ _privateFun.prsBO2VO = function(obj) {
             to_name: ret.to_name,
             to_addr: ret.to_addr,
             to_tel: ret.to_tel,
-            op_id: ret.op_id,
-            op_name: ret.op_name,
-            //op_at: ret.op_at ? ret.op_at.getTime() : null,
-            express: ret.express,
-            express_no: ret.express_no,
-            other: ret.other,
+            op_id: ret.op_id ? ret.op_id : '',
+            op_name: ret.op_name ? ret.op_name : '',
+            op_at: ret.op_at ? ret.op_at.getTime() : null,
+            express: ret.express ? ret.express : '',
+            express_no: ret.express_no ? ret.express_no : '',
+            other: ret.other ? ret.other : '',
             status: ret.status,
             buy_at: ret.buy_at ? ret.buy_at.getTime() : null
         }
     } });
     return result;
 }
+
+router.get('/mine', function (req, res, next) { //客户分页查询自己的订单
+    var rm = new RestMsg();
+
+    var uid = req.param('uid');
+    if (!uid) {
+        rm.errorMsg('未获取到您的信息！');
+        res.send(rm);
+        return;
+    }
+    var options = {'$slice':2};
+    var row = req.param('row');
+    var start = req.param('start');
+    if (row) {
+        options['limit'] = Number(row);
+    }
+    if (start) {
+        options['skip'] = Number(start);
+    }
+    options['sort'] = {buy_at: -1};
+
+    var page = new Page();
+    Order.count({customer_id: uid}, function(err, count) {
+        if (err) {
+            rm.errorMsg(err);
+            res.send(rm);
+            return;
+        }
+        page.setPageAttr(count);
+        Order.find({customer_id: uid}, null, options, function(err, ret) {
+            if (err) {
+                rm.errorMsg(err);
+                res.send(rm);
+                return;
+            }
+            if (ret!==null && ret.length>0) {
+                page.setData(ret.map(_privateFun.prsBO2VO));
+            }
+            rm.setResult(page);
+            rm.successMsg();
+            res.send(rm);
+        });
+    });
+});
 
 router.route('/')
     .get(function (req, res, next) { //分页查询
@@ -94,19 +139,43 @@ router.route('/')
     .post(function(req, res, next) { //新增
         var rm = new RestMsg();
 
-        var order = new Order();
-        order.name = req.param('name');
-        order.credit = Number(req.param('credit'));
-        order.status = 1;
-        order.buy_at = new Date();
-        order.save(function(err, bo) {
+        var uid = req.param('uid');
+        User.findById(uid, function(err, user) {
             if (err) {
                 rm.errorMsg(err);
                 res.send(rm);
                 return;
             }
-            rm.successMsg();
-            res.send(rm);
+            var order = new Order();
+            order.customer_id = uid;
+            order.customer_name = user.name;
+            order.to_name = user.contact;
+            order.to_tel = user.tel;
+            order.to_addr = user.addr;
+            order.name = req.param('name');
+            order.credit = Number(req.param('credit'));
+            order.status = 1;
+            order.buy_at = new Date();
+            order.save(function(err, bo) {
+                if (err) {
+                    rm.errorMsg(err);
+                    res.send(rm);
+                    return;
+                }
+
+                //扣除账户积分
+                var newCredit = user.credit-order.credit;
+                User.update({_id: uid}, {credit: newCredit}, function(err, ret) {
+                    if (err) {
+                        rm.errorMsg(err);
+                        res.send(rm);
+                        return;
+                    }
+                    rm.setResult(newCredit);
+                    rm.successMsg();
+                    res.send(rm);
+                });
+            });
         });
     });
 
@@ -128,39 +197,57 @@ router.route('/:oid')
     .put(function(req, res, next) { //处理订单
         var rm = new RestMsg();
 
-        var op_id = req.param('op_id');
-        var op_name = req.param('op_name');
         var express = req.param('express');
         var express_no = req.param('express_no');
         var other = req.param('other');
-        if (!express) {
-            rm.errorMsg('未获取到快递公司名称！');
-            res.send(rm);
-            return;
-        }
-        if (!express_no) {
-            rm.errorMsg('未获取到快递单号！');
-            res.send(rm);
-            return;
+        if (express) {
+            other = '';
+            if (!express_no) {
+                rm.errorMsg('未获取到快递单号！');
+                res.send(rm);
+                return;
+            }
+        } else {
+            if (express_no) {
+                other = '';
+                rm.errorMsg('未获取到快递公司名称！');
+                res.send(rm);
+                return;
+            } else {
+                if (!other) {
+                    rm.errorMsg('请录入快递信息或选填其他送货方式！');
+                    res.send(rm);
+                    return;
+                }
+            }
         }
 
-        //更新
-        var obj = {};
-        obj.op_id = op_id;
-        obj.op_name = op_name;
-        obj.op_at = new Date();
-        obj.express = express;
-        obj.express_no = express_no;
-        obj.other = other;
-        obj.status = 2;
-        Order.update({_id: req.params.oid}, obj, function(err, ret) {
+        var uid = req.param('uid');
+        User.findById(uid, function(err, user) {
             if (err) {
                 rm.errorMsg(err);
                 res.send(rm);
                 return;
             }
-            rm.successMsg();
-            res.send(rm);
+
+            //更新
+            var obj = {};
+            obj.op_id = uid;
+            obj.op_name = user.name;
+            obj.op_at = new Date();
+            obj.express = express;
+            obj.express_no = express_no;
+            obj.other = other;
+            obj.status = 2;
+            Order.update({_id: req.params.oid}, obj, function(err, ret) {
+                if (err) {
+                    rm.errorMsg(err);
+                    res.send(rm);
+                    return;
+                }
+                rm.successMsg();
+                res.send(rm);
+            });
         });
     });
 

@@ -2,7 +2,7 @@
  * 用户BO
  * @type {mongoose|exports}
  */
-var mongoose = require('../../../db/db');
+var mongoose = require('../db/db');
 
 var userSchema = mongoose.Schema({
     "login":String,//登录名

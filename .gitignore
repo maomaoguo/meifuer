@@ -5,6 +5,7 @@
 /db/db.js
 /node_modules
 /public/img/present
+/uploads
 
 # Logs
 logs

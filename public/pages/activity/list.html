@@ -5,7 +5,7 @@
                 <header class="panel-heading">
                     <form class="form-inline" role="form">
                         <div class="form-group">
-                            <input type="email" class="form-control" id="exampleInputEmail2" placeholder="活动名称">
+                            <input type="text" class="form-control" id="q-name" placeholder="活动名称">
                         </div>
                         <button type="button" class="btn btn-info" onclick="initTable()">查询</button>
                         <button type="reset" class="btn btn-warning">重置</button>
@@ -100,7 +100,7 @@
         return  str;
     }
 
-    // 异步获取table数据
+    //异步获取table数据
     function retrieveData(sSource, aoData, fnCallback) {
         var row = 10;
         var start = 0;

@@ -15,7 +15,7 @@ var orderSchema = mongoose.Schema({
     "to_tel":String, //收件人电话
     "op_id":String,//处理人id
     "op_name":String,//处理人姓名
-    "op_at":String,//处理时间
+    "op_at":Date,//处理时间
     "express":String,//快递公司名称
     "express_no": String,//"快递单号",
     "other":String,//其他送货方式
