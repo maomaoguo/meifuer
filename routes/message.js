@@ -17,14 +17,14 @@ _privateFun.prsBO2VO = function (obj) {
         transform: function (doc, ret, options) {
             return {
                 id: ret.mes_id,
-                name: ret.mes_name,
-                mes_at: ret.mes_at,
+                mes_name: ret.mes_name,
+                mes_at: ret.mes_at ? ret.mes.at.getTime() : null,
                 message: ret.message,
                 op_id: ret.op_id,
                 op_name: ret.op_name,
                 type: ret.type,
                 op_note: ret.op_note,
-                op_at: ret.op_at ? ret.create_at.getTime() : null
+                op_at: ret.op_at ? ret.op_at.getTime() : null
             }
         }
     });
@@ -33,6 +33,62 @@ _privateFun.prsBO2VO = function (obj) {
 
 
 router.route('/')
+    .get(function (req, res, next) { //分页查询
+        var rm = new RestMsg();
+
+        var query = {};
+        var type = req.param('type');
+        var mesName = req.param('mesName');
+        var opName = req.param('opName');
+        var message = req.param('message');
+
+        if (type) {
+            query.type = type;
+        }
+        if (mesName) {
+            query.mes_name = new RegExp(mesName, 'i'); //不区分大小写模糊查询
+        }
+        if (opName) {
+            query.op_name = new RegExp(opName, 'i'); //不区分大小写模糊查询
+        }
+        if (message) {
+            query.message = new RegExp(message, 'i'); //不区分大小写模糊查询
+        }
+
+        var options = {'$slice': 2};
+        var row = req.param('row');
+        var start = req.param('start');
+        if (row) {
+            options['limit'] = Number(row);
+        }
+        if (start) {
+            options['skip'] = Number(start);
+        }
+        options['sort'] = {create_at: -1};
+
+        var page = new Page();
+        Message.count(query, function (err, count) {
+            if (err) {
+                rm.errorMsg(err);
+                res.send(rm);
+                return;
+            }
+            page.setPageAttr(count);
+            Message.find(query, null, options, function (err, ret) {
+                if (err) {
+                    rm.errorMsg(err);
+                    res.send(rm);
+                    return;
+                }
+                if (ret !== null && ret.length > 0) {
+                    page.setData(ret.map(_privateFun.prsBO2VO));
+                }
+                rm.setResult(page);
+                rm.successMsg();
+                res.send(rm);
+            });
+        });
+    })
     .post(function (req, res, next) {
         var rm = new RestMsg();
         var name = req.param('name');
