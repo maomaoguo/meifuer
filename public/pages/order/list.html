@@ -93,6 +93,10 @@
             <div class="modal-body">
                 <form class="form-horizontal tasi-form">
                     <input id="_id" hidden>
+                    <div class="col-md-6">
+                    </div>
+                    <div class="col-md-6">
+                    </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">礼品名称</label>
                         <div class="col-sm-9">
@@ -100,7 +104,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">所需积分</label>
+                        <label class="col-sm-3 control-label">消费积分</label>
                         <div class="col-sm-9">
                             <input type="text" class="form-control" id="credit">
                         </div>
@@ -171,7 +175,7 @@
             </div>
             <div class="modal-footer">
                 <button data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
-                <button class="btn btn-success" type="button" onclick="dealOrder()">处理</button>
+                <button id="deal-btn" class="btn btn-success" type="button" onclick="dealOrder()">处理</button>
             </div>
         </div>
     </div>
@@ -250,7 +254,7 @@
     function descRender(data, type, row) {
         var str = '<a id="'
                 + data
-                + '" onclick="showOrder(this)" align="center" href="javascript:;" data-toggle="tooltip" title="详情"><i class="icon-file-text text-primary"></i></a>&nbsp;&nbsp;';
+                + '" onclick="showOrder(this, '+row.status+')" align="center" href="javascript:;" data-toggle="tooltip" title="详情"><i class="icon-file-text text-primary"></i></a>&nbsp;&nbsp;';
         if (row.status == 1) {
             str += '<a id="'
                 + data
@@ -273,10 +277,14 @@
         });
 
         var name = $('#q-name').val();
+        var customer = $('#q-customer').val();
+        var to = $('#q-to').val();
         $.getJSON(sSource, {
             start: start,
             row: row,
-            name: name
+            name: name,
+            customer: customer,
+            to: to
         }, function(rm) {
             if (rm.code == 1) {
                 var data = rm.result;
@@ -293,7 +301,8 @@
     }
 
     //详情展示
-    function showOrder(v) {
+    function showOrder(v, status) {
+        $('#detailModal form')[0].reset();
         var oid = $(v).attr('id');
         $.getJSON('api/orders/'+oid, function(rm) {
             if (rm.code == 1) {
@@ -309,6 +318,24 @@
                 }
                 $('#detailModal').modal({backdrop: 'static'});
                 $('#detailModal').modal('show');
+                if (order.other) {
+                    $('#express').parents('.form-group').hide();
+                    $('#express_no').parents('.form-group').hide();
+                    $('#other').parents('.form-group').show();
+                } else {
+                    $('#other').parents('.form-group').hide();
+                    $('#express').parents('.form-group').show();
+                    $('#express_no').parents('.form-group').show();
+                }
+                if (status == 1) {
+                    $('#deal-info').hide();
+                    $('#deal-info').prev().css({'margin-bottom': 0});
+                    $('#deal-btn').show();
+                } else {
+                    $('#deal-info').show();
+                    $('#deal-info').prev().css({'margin-bottom': 15});
+                    $('#deal-btn').hide();
+                }
             } else {
                 yeshidenotify('error', 'top right', '详情获取失败！', '提示将在2秒内关闭', 2000);
             }
@@ -317,6 +344,7 @@
 
     //处理订单
     function dealOrder(v) {
+        $('#dealModal form')[0].reset();
         if (v) {
             $('#deal-oid').val($(v).attr('id'));
         } else {
@@ -337,6 +365,7 @@
             type: 'PUT',
             url: 'api/orders/' + $('#deal-oid').val(),
             data: {
+                uid: customer.uid,
                 express: express,
                 express_no: express_no,
                 other: other

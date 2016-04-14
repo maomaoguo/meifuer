@@ -26,9 +26,6 @@
     }
 </style>
 
-<link href="assets/fancybox/source/jquery.fancybox.css" rel="stylesheet" />
-<link rel="stylesheet" type="text/css" href="css/gallery.css" />
-
 <script id="order-template" type="text/x-jsrender">
     <tr>
         <td>{{:name}}</td>
@@ -75,7 +72,7 @@
                     <i class="icon-ticket"></i>
                 </div>
                 <div class="value">
-                    <h1 class="count">0</h1>
+                    <h1 id="myCredit">0</h1>
                     <p>我的积分</p>
                 </div>
             </section>
@@ -167,32 +164,11 @@
 
     //页面加载完成后执行
     $(function() {
-        countUp(customer.credit);
+        $('#myCredit').text(customer.credit);
         getMyOrders();
         initOrdersTabel();
         getGifts();
     });
-
-    //积分动态增长
-    function countUp(count) {
-        var div_by = 100,
-                speed = Math.floor(count / div_by),
-                $display = $('.count'),
-                run_count = 1,
-                int_speed = 5;
-
-        var int = setInterval(function() {
-            if(run_count < div_by){
-                $display.text(speed * run_count);
-                run_count++;
-            } else if(parseInt($display.text()) < count) {
-                var curr_count = parseInt($display.text()) + 1;
-                $display.text(curr_count);
-            } else {
-                clearInterval(int);
-            }
-        }, int_speed);
-    }
 
     //初始化兑换记录表格
     function getMyOrders() {
@@ -354,7 +330,9 @@
             }, function(rm) {
                 if (rm.code == 1 ) {
                     yeshidenotify('success', 'top right', '兑换成功！我们将尽快为您发货。', '提示将在2秒内关闭', 2000);
-                    countUp(customer.credit);
+                    var newCredit = rm.result;
+                    customer.credit = newCredit;
+                    $('#myCredit').text(newCredit);
                     getMyOrders();
                     initOrdersTabel();
                     getGifts();

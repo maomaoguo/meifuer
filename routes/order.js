@@ -27,12 +27,12 @@ _privateFun.prsBO2VO = function(obj) {
             to_name: ret.to_name,
             to_addr: ret.to_addr,
             to_tel: ret.to_tel,
-            op_id: ret.op_id,
-            op_name: ret.op_name,
-            //op_at: ret.op_at ? ret.op_at.getTime() : null,
-            express: ret.express,
-            express_no: ret.express_no,
-            other: ret.other,
+            op_id: ret.op_id ? ret.op_id : '',
+            op_name: ret.op_name ? ret.op_name : '',
+            op_at: ret.op_at ? ret.op_at.getTime() : null,
+            express: ret.express ? ret.express : '',
+            express_no: ret.express_no ? ret.express_no : '',
+            other: ret.other ? ret.other : '',
             status: ret.status,
             buy_at: ret.buy_at ? ret.buy_at.getTime() : null
         }
@@ -162,8 +162,19 @@ router.route('/')
                     res.send(rm);
                     return;
                 }
-                rm.successMsg();
-                res.send(rm);
+
+                //扣除账户积分
+                var newCredit = user.credit-order.credit;
+                User.update({_id: uid}, {credit: newCredit}, function(err, ret) {
+                    if (err) {
+                        rm.errorMsg(err);
+                        res.send(rm);
+                        return;
+                    }
+                    rm.setResult(newCredit);
+                    rm.successMsg();
+                    res.send(rm);
+                });
             });
         });
     });
@@ -186,39 +197,57 @@ router.route('/:oid')
     .put(function(req, res, next) { //处理订单
         var rm = new RestMsg();
 
-        var op_id = req.param('op_id');
-        var op_name = req.param('op_name');
         var express = req.param('express');
         var express_no = req.param('express_no');
         var other = req.param('other');
-        if (!express) {
-            rm.errorMsg('未获取到快递公司名称！');
-            res.send(rm);
-            return;
-        }
-        if (!express_no) {
-            rm.errorMsg('未获取到快递单号！');
-            res.send(rm);
-            return;
+        if (express) {
+            other = '';
+            if (!express_no) {
+                rm.errorMsg('未获取到快递单号！');
+                res.send(rm);
+                return;
+            }
+        } else {
+            if (express_no) {
+                other = '';
+                rm.errorMsg('未获取到快递公司名称！');
+                res.send(rm);
+                return;
+            } else {
+                if (!other) {
+                    rm.errorMsg('请录入快递信息或选填其他送货方式！');
+                    res.send(rm);
+                    return;
+                }
+            }
         }
 
-        //更新
-        var obj = {};
-        obj.op_id = op_id;
-        obj.op_name = op_name;
-        obj.op_at = new Date();
-        obj.express = express;
-        obj.express_no = express_no;
-        obj.other = other;
-        obj.status = 2;
-        Order.update({_id: req.params.oid}, obj, function(err, ret) {
+        var uid = req.param('uid');
+        User.findById(uid, function(err, user) {
             if (err) {
                 rm.errorMsg(err);
                 res.send(rm);
                 return;
             }
-            rm.successMsg();
-            res.send(rm);
+
+            //更新
+            var obj = {};
+            obj.op_id = uid;
+            obj.op_name = user.name;
+            obj.op_at = new Date();
+            obj.express = express;
+            obj.express_no = express_no;
+            obj.other = other;
+            obj.status = 2;
+            Order.update({_id: req.params.oid}, obj, function(err, ret) {
+                if (err) {
+                    rm.errorMsg(err);
+                    res.send(rm);
+                    return;
+                }
+                rm.successMsg();
+                res.send(rm);
+            });
         });
     });
 
