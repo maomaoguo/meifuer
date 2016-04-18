@@ -3,10 +3,10 @@
  */
 var express = require('express');
 var router = express.Router();
-
-
-//本示例的登录没有进行数据库中用户的验证，具体项目则需要进行数据库的用户校验
-//用户名密码均为admin
+var RestMsg = require('../common/restmsg');
+var encrypt = require('../common/encrypt');
+var UserBO = require('../model/userbo');
+var LogBO = require('../model/logbo');
 
 
 /**
@@ -15,9 +15,22 @@ var router = express.Router();
 router.get('/', function(req, res) {
     if (req.session.uid) {
         //已登录
-        res.render('index',{"name": "admin"});
+        var restmsg = new RestMsg();
+        UserBO.find({_id:req.session.uid},function(err,bo){
+            if (err) {
+                restmsg.errorMsg(err);
+                res.send(restmsg);
+                return;
+            }
+            if(bo){
+                bo.password = '******';
+                res.render('index',{
+                    "user": bo
+                });
+            }
+        });
     }else {
-        res.redirect('/login');
+        res.redirect('/home');
     }
 });
 
@@ -48,10 +61,14 @@ router.route('/login')
 router.get('/logout', function (req, res, next) {
     if (req.session) {
         req.session.uid = null;
+        req.session.name = null;
+        req.session.credit = null;
         res.clearCookie('uid');
+        res.clearCookie('name');
+        res.clearCookie('credit');
         req.session.destroy();
     }
-    res.redirect('/login');
+    res.redirect('/home');
 });
 
 module.exports = router;

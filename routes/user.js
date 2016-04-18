@@ -16,7 +16,7 @@ _privateFun.prsBO2VO2 = function(obj){
     var result = obj.toObject({ transform: function(doc, ret, options){
         var status = ret.status==undefined?1:ret.status;
         return {
-            id:ret._id,
+            uid:ret._id,
             name: ret.name,
             "login":ret.login,//登录名
             "role":ret.role,//用户角色，1超级管理员（只有一个），可添加管理员，2普通管理员（无增删改查管理员的权限），3，客户
@@ -76,12 +76,12 @@ router.route('/')
         var user = new UserBO();
         var restmsg = new RestMsg();
         var name = req.param('name');
-        var pwd = req.param('pwd');
+        //var pwd = req.param('pwd');
         var login = req.param('login');
         var role = req.param('role');
         var credit = req.param('credit');
 
-        if(!name || !pwd || !login || !role){
+        if(!name || !login || !role){
             restmsg.errorMsg('有必填项未填写');
             res.send(restmsg);
             return;
@@ -92,7 +92,7 @@ router.route('/')
             user.credit = Number(credit);
         }
 
-        user.pwd = encrypt.md5Hash(pwd);
+        user.pwd = encrypt.md5Hash('123456');
         user.name = name;
         user.login = login;
         user.role = Number(role);
@@ -127,12 +127,36 @@ router.route('/')
                         return;
                     }else{
                         user.save(function(err,obj){
+
                             if (err) {
                                 restmsg.errorMsg(err);
                                 res.send(restmsg);
                                 return;
                             }
-                            res.send(restmsg.successMsg());
+
+                            if(user.role == 3){
+                                var log = new LogBO();
+                                log.op_credit = user.credit;
+                                log.op_id = req.session.uid;
+                                log.op_name = req.session.name;
+                                log.oped_id = obj._id;
+                                log.oped_name = user.name;
+                                log.pre_credit = 0;
+                                log.credit = user.credit;
+                                log.type = 3;//客户注册；
+                                log.creat_at = new Date();
+                                log.desc = '成功注册1名客户';
+                                log.save(function(err,obj) {
+                                    if (err) {
+                                        restmsg.errorMsg(err);
+                                        res.send(restmsg);
+                                        return;
+                                    }
+                                    res.send(restmsg.successMsg());
+                                });
+                            }else{
+                                res.send(restmsg.successMsg());
+                            }
                         });
                     }
                 })

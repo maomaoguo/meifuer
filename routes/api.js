@@ -4,7 +4,7 @@
  */
 var express = require('express');
 var router = express.Router();
-var user = require('./user/user');
+var user = require('./user');
 var activity = require('./activity');
 var order = require('./order');
 var log = require('./log');
