@@ -44,7 +44,7 @@ router.get('/active', function(req, res, next) { //客户端--活动礼品列表
             var goods = activity.goods;
             if (goods!=null && goods.length) {
                 for (var i=0; i<goods.length; i++) {
-                    if (goods[i].credit <= credit) {
+                    if (Number(goods[i].credit) <= Number(credit)) {
                         goods[i].state = true;
                     } else {
                         goods[i].state = false;

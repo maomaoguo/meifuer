@@ -37,7 +37,7 @@
 
 </head>
 
-<body>
+<body style="background-color: #eee;">
 <section id="container" >
     <!--header start-->
     <header class="header white-bg">
@@ -97,11 +97,13 @@
                     <ul class="sub">
                         <li><a href="javascript:;" onclick="loadMainPage('pages/activity/list.html')">活动管理</a></li>
                         <li><a href="javascript:;" onclick="loadMainPage('pages/order/list.html')">订单管理</a></li>
+                        <li><a href="javascript:;" onclick="loadMainPage('pages/order/gifts.html')">积分兑换</a></li>
                     </ul>
                 </li>
 
                 <li>
-                    <a href="javascript:;"><i class="icon-comment-alt"></i><span>留言板</span>
+                    <a href="javascript:;" onclick="loadMainPage('pages/message/list.html')">
+                        <i class="icon-comment-alt" ></i><span>留言板</span>
                     </a>
                 </li>
 
@@ -177,6 +179,10 @@
         $('#main-content').load(v);
     }
 
+    var customer = {
+        uid: '570e5091a32ab6a1dad90ead',
+        credit: 36000
+    };
 </script>
 </body>
 </html>
