@@ -101,14 +101,25 @@ router.route('/:uid')
         user.desc = req.param('desc',null);
         user.status = 1;//初始化正常状态
         var restmsg = new RestMsg();
-        UserService.update(user,function(err,obj){
-            if (err) {
-                restmsg.errorMsg(err);
-                res.send(restmsg);
-                return;
+        User.findOne({_id:bo._id},function(err,pro){
+            if (err){
+                callback(err);
+                return console.error(err);
             }
-            res.send( restmsg.successMsg());
-        });
+            if(pro) {
+                UserService.update(user, function (err, obj) {
+                    if (err) {
+                        restmsg.errorMsg(err);
+                        res.send(restmsg);
+                        return;
+                    }
+                    res.send(restmsg.successMsg());
+                });
+            }else{
+                restmsg.errorMsg('用户不存在');
+                res.send(restmsg);
+            }
+        })
     })
    .delete(function(req,res,next){//删除用户信息
         var uid = req.params.uid;
