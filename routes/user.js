@@ -267,3 +267,5 @@ router.route('/:uid/credit').put(function(req,res,next){
     })
 
 });
+
+module.exports = router;
