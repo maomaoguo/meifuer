@@ -18,7 +18,7 @@ _privateFun.prsBO2VO = function (obj) {
             return {
                 id: ret.mes_id,
                 mes_name: ret.mes_name,
-                mes_at: ret.mes_at ? ret.mes.at.getTime() : null,
+                mes_at: ret.mes_at ? ret.mes_at.getTime() : null,
                 message: ret.message,
                 op_id: ret.op_id,
                 op_name: ret.op_name,
