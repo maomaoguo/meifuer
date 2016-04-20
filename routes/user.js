@@ -164,6 +164,59 @@ router.route('/')
         })
     });
 
+//改变积分
+router.route('/:uid/credit')
+    .put(function(req,res,next){
+        var uid = req.params.uid;
+        var credit = req.param('credit');
+        var restmsg = new RestMsg();
+
+        UserBO.findOne({_id:uid},function(err,pro){
+            if (err){
+                restmsg.errorMsg(err);
+                res.send(restmsg);
+                return;
+            }
+
+            if(pro) {
+                var log = new LogBO();
+                log.op_credit = Number(credit);
+                UserBO.update({_id:uid},{credit:log.op_credit+pro.credit},function(err,obj){
+                    if (err) {
+                        restmsg.errorMsg(err);
+                        res.send(restmsg);
+                        return;
+                    }
+
+
+                    log.op_id = req.session.uid;
+                    log.op_name = req.session.name;
+                    log.oped_id = uid;
+                    log.oped_name = pro.name;
+                    log.pre_credit = pro.credit;
+                    log.credit = log.op_credit+pro.credit;
+                    log.type = 1;//积分攒取；
+                    log.creat_at = new Date();
+                    log.desc = '成功攒取'+credit+'积分';
+                    log.save(function(err,obj) {
+                        if (err) {
+                            restmsg.errorMsg(err);
+                            res.send(restmsg);
+                            return;
+                        }
+                        res.send(restmsg.successMsg());
+                    });
+
+                });
+
+            }else{
+                restmsg.errorMsg('客户不存在');
+                res.send(restmsg);
+            }
+        })
+
+    });
+
 router.route('/:uid')
     //修改用户
     .post(function (req, res, next) {
@@ -216,54 +269,4 @@ router.route('/:uid')
         });
     });
 
-//改变积分
-router.route('/:uid/credit').put(function(req,res,next){
-    var uid = req.params.uid;
-    var credit = req.param('credit');
-    var restmsg = new RestMsg();
-
-    UserBO.findOne({_id:uid},function(err,pro){
-        if (err){
-            restmsg.errorMsg(err);
-            res.send(restmsg);
-            return;
-        }
-
-        if(pro) {
-            var log = new LogBO();
-            log.op_credit = Number(credit);
-            UserBO.update({_id:uid},{credit:log.op_credit+pro.credit},function(err,obj){
-                if (err) {
-                    restmsg.errorMsg(err);
-                    res.send(restmsg);
-                    return;
-                }
-
-
-                log.op_id = req.session.uid;
-                log.op_name = req.session.name;
-                log.oped_id = uid;
-                log.oped_name = pro.name;
-                log.pre_credit = pro.credit;
-                log.credit = log.op_credit+pro.credit;
-                log.type = 1;//积分攒取；
-                log.creat_at = new Date();
-                log.desc = '成功攒取'+credit+'积分';
-                log.save(function(err,obj) {
-                    if (err) {
-                        restmsg.errorMsg(err);
-                        res.send(restmsg);
-                        return;
-                    }
-                    res.send(restmsg.successMsg());
-                });
-
-            });
-
-        }else{
-            restmsg.errorMsg('客户不存在');
-            res.send(restmsg);
-        }
-    })
-
-});
+module.exports = router;

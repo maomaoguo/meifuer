@@ -24,13 +24,13 @@ router.get('/', function(req, res) {
             }
             if(bo){
                 bo.password = '******';
-                res.render('index',{
+                res.render('home',{
                     "user": bo
                 });
             }
         });
     }else {
-        res.redirect('/home');
+        res.render('home',{"user":null});
     }
 });
 
