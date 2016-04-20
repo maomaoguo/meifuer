@@ -6,7 +6,7 @@ var mongoose = require('../db/db');
 var messageSchema = mongoose.Schema({
     "mes_id":String,//留言人id
     "mes_name": String,//"留言人姓名,
-    "mes_at": String,//留言时间,
+    "mes_at": Date,//留言时间,
     "message": String,//留言内容,
     "op_id":String,//操作人id
     "op_name": String,//"操作人姓名,
