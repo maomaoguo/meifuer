@@ -14,59 +14,37 @@
                               </div>
                           </div>
                       </div>
-	           <form id="sys_form" method="post"  action="api/users/update"  class="form-horizontal">
+	           <form id="sys_form" method="post"  action=""  class="form-horizontal">
 					<div class="modal-body">
-					<input name="uid" id="uid" type="hidden" /> 
-						<div class="form-group">
-							<label class="col-lg-2 control-label" for="name"> 姓名： </label>
-							<div class="col-lg-6">
-								<input type="text" id="name" name="name" class="form-control input-sm" placeholder="姓名" maxlength="32"/>
+						<input type="text"  name="role" value="2" hidden="hidden">
+						<div class="form-group clearfix">
+							<label class="col-sm-3 control-label" for="login">登录名</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control input-sm" id="login" name="login" readonly>
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-lg-2 control-label" for= "sex">性  别：</label>
-							<div class="col-lg-6">
-								<select data-placeholder="请选择性别" name="sex" id="sex" class="form-control chosen-select input-sm" tabindex="4">
-									<option value=""></option>
-									<option value="1" selected="selected"> 男 </option>
-									<option value="2"> 女 </option>
-								</select>
+						<div class="form-group clearfix">
+							<label class="col-sm-3 control-label" for="name">用户姓名</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control input-sm" id="name" name="name" readonly>
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-lg-2 control-label" for="qq"> qq： </label>
-							<div class="col-lg-6">
-								<input type="text" id="qq" name="qq" class="form-control input-sm" placeholder="qq" maxlength="225"/>
+						<div class="form-group clearfix">
+							<label class="col-sm-3 control-label" for="tel">联系电话</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control input-sm" id="tel" name="tel">
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-lg-2 control-label" for="tel"> 电话号码： </label>
-							<div class="col-lg-6">
-								<input type="text" id="tel" name="tel" class="form-control input-sm" placeholder="电话号码"/>
+						<div class="form-group clearfix">
+							<label class="col-sm-3 control-label" for="qq">QQ</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control input-sm" id="qq" name="qq">
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-lg-2 control-label" for="address"> 地址： </label>
-							<div class="col-lg-6">
-								<input type="text" id="address" name="address" class="form-control input-sm" placeholder="地址"/>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-lg-2 control-label" for="email"> 邮箱： </label>
-							<div class="col-lg-6">
-								<input type="text" id="email" name="email"  class="form-control input-sm" placeholder="邮箱"/>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-lg-2 control-label" for="note"> 个人介绍： </label>
-							<div class="col-lg-6">
-								<input type="text" id="note" name="note" class="form-control input-sm" placeholder="个人介绍"/>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-lg-2 control-label" for="contacts"> 其他： </label>
-							<div class="col-lg-6">
-								<input type="text" id="contacts" name="contacts" class="form-control input-sm" placeholder="其他"/>
+						<div class="form-group clearfix">
+							<label class="col-sm-3 control-label" for="desc">备注</label>
+							<div class="col-sm-9">
+								<textarea class="form-control" id="desc" name="desc"></textarea>
 							</div>
 						</div>
 						<div class="form-group" style="margin-top: 15px;">
@@ -87,42 +65,17 @@
 	});
 	//获取用户资料
 	function initData(){
-		$.get("api/users/info", function(data) {
+		$.get("/setting", function(data) {
 			if (data.code == 1) {
-				$('#uid').val(data.result.uid);
-				$('#name').val(data.result.name);
-		        $('#tel').val(data.result.tel);
-		        $('#email').val(data.result.email);
-		        $('#sex').val(data.result.sex);
-		        $('#address').val(data.result.address);
-		        $('#email').val(data.result.email);
-		        $('#note').val(data.result.note);
-		        $('#contacts').val(data.result.contacts);
+				for(var key in data.result){
+					$("#"+key).val(data.result[key]);
+				}
+				$("#sys_form").attr("action","api/users/"+data.result._id);
 			} else {
-				yeshidenotify('error', 'top right', "获取个人登录信息失败", "提示将在3秒内关闭",3000);
+				yeshidenotify('error', 'top right', "获取个人信息失败", "提示将在3秒内关闭",3000);
 			}
 		});
 	}
-	/* function saveInfo(){
-		var name = $('#name').val();
-		var tel = $('#tel').val();
-		var email = $('#email').val();
-		var sex =  $('#sex').val();
-		var url = "api/users/update";//添加url
-		$('#sys_form').ajaxSubmit({
-			type : 'POST',
-			url : url,
-			dataType: "json",
-			success : function(msg) {
-				if (msg.code == 1) {
-					yeshidenotify('success', 'top right', "个人信息修改成功", "提示将在3秒内关闭",3000);
-					initData();
-				} else {
-					yeshidenotify('error', 'top right', "个人信息修改失败", "提示将在3秒内关闭",3000);
-				}
-			}
-		});
-	} */
 	
 	//form表单校验
 	function initValidate() {
@@ -143,34 +96,22 @@
                 invalid: 'glyphicon glyphicon-remove',
                 validating: 'glyphicon glyphicon-refresh'
             },
-            fields: {
-            	'name': {
-	                validators: {
-	                    notEmpty: {
-	                        message: '名称不能为空！'
-	                    }
-	                }
-	            },
-            	'sex': {
-	                validators: {
-	                    notEmpty: {
-	                        message: '请选择性别！'
-	                    }
-	                }
-	            },
-	            'tel': {
-	            	validators: {
-	            		notEmpty: {
-	                        message: '手机号码不能为空！'
-	                    },
-	            		 stringLength: {
-		                    max: 11,
-		                    message: '手机号码长度不能大于11！'
-		                }
-		                
-	            	}
-	            }
-            }
+			fields: {
+				'name': {
+					validators: {
+						notEmpty: {
+							message: '用户姓名不能为空！'
+						}
+					}
+				},
+				'login': {
+					validators: {
+						notEmpty: {
+							message: '登录名不能为空！'
+						}
+					}
+				}
+			}
         }) .on('success.form.bv', function (e) {
             e.preventDefault();
 

@@ -8,11 +8,12 @@ var RestMsg = require('../common/restmsg');
 var encrypt = require('../common/encrypt');
 var UserBO = require('../model/userbo');
 var LogBO = require('../model/logbo');
+var Page = require('../common/page');
 
 var _privateFun = router.prototype
 
 //BO 转 VO 继承BO的字段方法2，并且进行相关字段的扩展和删除
-_privateFun.prsBO2VO2 = function(obj){
+_privateFun.prsBO2VO = function(obj){
     var result = obj.toObject({ transform: function(doc, ret, options){
         var status = ret.status==undefined?1:ret.status;
         return {
@@ -58,7 +59,7 @@ router.route('/')
 
         //过滤掉自己
         query._id = {$ne: req.session.uid};
-        
+        var page = new Page();
         UserBO.find(query,function(err,list){
             if (err) {
                 restmsg.errorMsg(err);
@@ -66,12 +67,12 @@ router.route('/')
                 return;
             }
             if(list!==null&&list.length>0){
-                list = list.map(_privateFun.prsBO2VO2);
+                page.setData(list.map(_privateFun.prsBO2VO));
             }
+            page.setPageAttr(list.length);
             var restmsg = new RestMsg();
             restmsg.successMsg();
-            restmsg.setResult(list);
-            restmsg.total = list.length;
+            restmsg.setResult(page);
             res.send(restmsg);
         })
     })
@@ -150,7 +151,7 @@ router.route('/')
                                 log.credit = user.credit;
                                 log.type = 3;//客户注册；
                                 log.creat_at = new Date();
-                                log.desc = '成功注册1名客户';
+                                log.desc = '成功注册1名客户,初始积分为['+user.credit+']。';
                                 log.save(function(err,obj) {
                                     if (err) {
                                         restmsg.errorMsg(err);

@@ -176,10 +176,11 @@
 			'fnServerData': retrieveData,
 			'bDestroy': true,
 			'bRetrieve': true,
-			'sAjaxDataProp': 'result',
+			'sAjaxDataProp': 'result.data',
 			'bFilter': false,
 			'bAutoWidth': false,
 			'bSort': false,
+			'bLengthChange': false,
 			'aoColumns': [{
 				'mData': 'name'
 			}, {
@@ -386,6 +387,7 @@
 	//显示modal
 	function showModal(){
 		$("#user-form")[0].reset();
+		$("#user-form").data('bootstrapValidator').resetForm();
 		$("#user-form").attr('action','/api/users')
 		$('modal-title').text('新增客户');
 		$("#login").removeAttr('readonly');
@@ -415,6 +417,7 @@
 	function addCredit(v){
 		var uid = $(v).data('id');
 		$("#credit-form")[0].reset();
+		$("#credit-form").data('bootstrapValidator').resetForm();
 		$("#credit-form").attr('action','/api/users/'+uid+"/credit")
 		$('#credit-modal').modal({backdrop: 'static'});
 		$('#credit-modal').modal('show');

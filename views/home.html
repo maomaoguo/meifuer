@@ -146,7 +146,9 @@
 	                  <ul class="nav navbar-nav">
 	                      <li class="active"><a href="javascript:;" onclick="loadMainPage('pages/home.html');"><i class="icon-home"></i>首页</a></li>
 	                      <li><a href="javascript:;" onclick="loadMainPage('pages/near.html');"><i class="icon-leaf"></i>产品展示</a></li>
+						  <% if (!user) { %>
 	                      <li><a href="javascript:;"><i class="icon-male"></i>积分换购</a></li>
+						  <% } %>
 	                  </ul>
 	              </div>
 	              <div class="top-nav ">
@@ -248,17 +250,20 @@
 					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 					<h2 class="modal-title" style="text-align: center">美福尔欢迎您</h2>
 				</div>
-				<form>
+				<form id="password_form">
 					<div class="modal-body">
 
 						<div class="form-group">
 							<div id="pwd-message" class="alert alert-warning" hidden></div>
 						</div>
 						<div class="form-group">
-							<input id="pwd-in" type="password" class="form-control" placeholder="修改密码" autofocus required>
+							<input type="password" id="oldPwd" name="oldPwd" class="form-control" placeholder="旧密码" maxlength="32" tabindex="1" required/>
+						</div>
+						<div class="form-group">
+							<input id="newPwd" name="newPwd" type="password" class="form-control" placeholder="新密码" autofocus required>
 						</div>
 						<div class="form-group" style="margin-bottom: 0;">
-							<input id="pwd-confirm" type="password" class="form-control" placeholder="确认密码" required>
+							<input  id="surePwd" type="password" class="form-control" placeholder="确认密码" required>
 						</div>
 					</div>
 					<div class="modal-footer">
@@ -332,6 +337,8 @@
     <script src="js/toucheffects.js"></script>
     
     <script src="assets/pin/jquery.pin.min.js"></script>
+	<script src="js/common.js"></script>
+	<script src="js/jquery-form.js"></script>
 	<script type="text/javascript">
 		
 		function loadMainPage(v) {
@@ -397,24 +404,47 @@
 		 * 修改密码
 		 */
 		function changePwd(){
-			var pwd = $('#pwd-in').val();
-			var pwdConfirm = $('#pwd-confirm').val();
-			if(!pwd || !pwdConfirm){
-				$('#pwd-message').text('请输入密码及确认密码！').show();
+			var oldPassword = $('#oldPwd').val();
+			var newPassword = $('#newPwd').val();
+			var newPassword2 = $('#surePwd').val();
+			if (isempty(oldPassword)) {
+				$('#pwd-message').text('请输入旧密码').show();
 				return false;
-			}else if(pwd != pwdConfirm){
-				$('#pwd-message').text('两次输入密码不一致！').show();
+			}
+			if (isempty(newPassword)) {
+				$('#pwd-message').text("请输入新密码！").show();
+				return false;
+			}
+			if (isempty(newPassword2)) {
+				$('#pwd-message').text("请确认新密码！").show();
+				return false;
+			}
+			if (newPassword != newPassword2) {
+				$('#pwd-message').text("两次输入新密码不同！").show();
+				return false;
+			}
+			if(newPassword == oldPassword){
+				$('#pwd-message').text("新密码与原始密码不能相同！").show();
 				return false;
 			}
 			$('#pwd-message').hide();
 
-			/*$.post("/login",{username:username,pwd:pwd},function(res){
-				if(res.code == -1){
-					$('#login-message').text('用户名或密码不正确！').show();
-				}else{
-					$('#login-message').hide();
+			$('#password_form').ajaxSubmit({
+				type : 'post',
+				url : '/account',
+				dataType: "json",
+				success : function(msg) {
+					if (msg.code == 1) {
+						$('#pwd-message').text("密码修改成功，请重新登录").show();
+						$('#oldPwd').val('');
+						$('#newPwd').val('');
+						$('#surePwd').val('');
+						window.location.href="/logout";
+					} else {
+						$('#pwd-message').text(msg.msg).show();
+					}
 				}
-			});*/
+			});
 		}
 	</script>
 </body>

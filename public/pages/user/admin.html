@@ -113,7 +113,7 @@
 			'fnServerData': retrieveData,
 			'bDestroy': true,
 			'bRetrieve': true,
-			'sAjaxDataProp': 'result',
+			'sAjaxDataProp': 'result.data',
 			"paging": false,
 			'bFilter': false,
 			'sInfo':false,
@@ -269,6 +269,7 @@
 
 	//显示modal
 	function showModal(){
+		$("#user-form").data('bootstrapValidator').resetForm();
 		$("#user-form")[0].reset();
 		$("#user-form").attr('action','/api/users')
 		$('modal-title').text('新增管理员');
