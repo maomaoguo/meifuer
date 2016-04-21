@@ -25,7 +25,7 @@ app.set('view engine', 'html');
 app.use(logger('dev'));
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-app.use(multer({dest: './uploads/'})); // for parsing multipart/form-data
+app.use(multer({dest: '../uploads/'})); // for parsing multipart/form-data
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public'),{index:false}));
 app.use(session({

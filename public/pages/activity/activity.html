@@ -10,6 +10,7 @@
         overflow: auto;
         padding: 10px 0;
         margin-bottom: 5px;
+        border-radius: 4px;
     }
     .present-plus {
          float: left;
@@ -93,6 +94,9 @@
             <div class="panel">
                 <header class="panel-heading">
                     新增活动
+                    <button class="close close-sm" type="button" title="返回" onclick="loadMainPage('pages/activity/list.html')">
+                        <i class="icon-reply"></i>
+                    </button>
                 </header>
                 <div class="panel-body">
                     <form id="activity-form" class="form-horizontal tasi-form" enctype='multipart/form-data'>

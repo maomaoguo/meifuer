@@ -15,13 +15,25 @@
         padding: 17px 15px;
     }
     .product-list .panel {
-        background-color: #f1f2f7;
         margin-bottom: 0;
     }
     .adtocart {
-        left: 39.5%;
+        background: #ff6c60;
+        border: 3px solid #fff;
+        bottom: -20px;
+        height: 40px;
+        left: 40%;
+        width: 40px;
+    }
+    a.adtocart:hover,
+    a.adtocart:focus {
+        background: #ff6c60;
     }
     .text-grey {
+        background-color: #ccc;
+    }
+    a.adtocart.text-grey:hover,
+    a.adtocart.text-grey:focus {
         background-color: #ccc;
     }
 </style>
@@ -108,9 +120,6 @@
         </div>
         <div class="col-md-9">
             <div class="alert alert-info alert-block fade in">
-                <button class="close close-sm" type="button" title="返回首页">
-                    <i class="icon-reply"></i>
-                </button>
                 <h4>
                     <i class="icon-coffee"></i>
                     感谢您的关注！
@@ -164,7 +173,7 @@
 
     //页面加载完成后执行
     $(function() {
-        $('#myCredit').text(customer.credit);
+        $('#myCredit').text(user.credit);
         getMyOrders();
         initOrdersTabel();
         getGifts();
@@ -175,7 +184,7 @@
         $.getJSON('api/orders/mine', {
             start: 0,
             row: 8,
-            uid: customer.uid
+            uid: user.uid
         }, function(rm) {
             if (rm.code == 1) {
                 var data = rm.result.data;
@@ -278,7 +287,7 @@
         $.getJSON(sSource, {
             start: start,
             row: row,
-            uid: customer.uid
+            uid: user.uid
         }, function(rm) {
             if (rm.code == 1) {
                 var data = rm.result;
@@ -302,7 +311,7 @@
 
     //获取活动礼品列表
     function getGifts() {
-        $.getJSON('api/activities/active', {credit: customer.credit}, function(rm) {
+        $.getJSON('api/activities/active', {credit: user.credit}, function(rm) {
             if (rm.code == 1) {
                 if (rm.result.goods) {
                     $('.alert').hide();
@@ -324,14 +333,14 @@
     function exchange(giftName, giftCredit) {
         confirm('cool', 'middle center', '提示！', '确定兑换该礼品？兑换后将无法取消！', function() {
             $.post('api/orders', {
-                uid: '570e5091a32ab6a1dad90ead',
+                uid: user.uid,
                 name: giftName,
                 credit: giftCredit
             }, function(rm) {
                 if (rm.code == 1 ) {
                     yeshidenotify('success', 'top right', '兑换成功！我们将尽快为您发货。', '提示将在2秒内关闭', 2000);
                     var newCredit = rm.result;
-                    customer.credit = newCredit;
+                    user.credit = newCredit;
                     $('#myCredit').text(newCredit);
                     getMyOrders();
                     initOrdersTabel();
