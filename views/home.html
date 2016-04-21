@@ -104,6 +104,9 @@
 	opacity: 0.7;
 	cursor: pointer;
 }
+.float-area :hover {
+	color: #FF6C60;
+}
 .arrow-pro.right:after {
     top: 0;
 }
@@ -189,6 +192,7 @@
 	      <footer class="site-footer">
 	          <div class="text-center">
 	              2016 &copy; 成都美福尔装饰材料有限公司.
+	              蜀ICP备16010628号
 	          </div>
 	      </footer>
 	      <!--footer end-->
@@ -199,7 +203,7 @@
   <!-- 右侧悬浮框————留言 -->
   <div class="float-area" style="bottom: 65px;" title="留言">
     <div class="activity">
-      <a href="#" onclick="checkLogin()">
+      <a onclick="checkLogin()">
         <span style="border-radius: 0;background-color: #FFF;color:#999;font-size:25px;">
           <i class="icon-envelope"></i>
         </span>
@@ -460,14 +464,14 @@
 		 * 留言前校验是否登录
 		 */
 		 function checkLogin(){
-		 	/*var user = "<%= user%>";
+		 	var user = "<%= user%>";
 		 	console.log(user)
 		 	if (user == 'null') {
 	            yeshidenotify('error', 'top right', '请先登录', '提示将在2秒内关闭', 2000);
 	            $('#login-modal').modal('show');
 	        } else {
 	        	$('#message-modal').modal('show');
-	        }*/
+	        }
 		 }
 
 		/**
