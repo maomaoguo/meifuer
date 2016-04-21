@@ -189,7 +189,6 @@
 	      <footer class="site-footer">
 	          <div class="text-center">
 	              2016 &copy; 成都美福尔装饰材料有限公司.
-	              <a href="#container" class="go-top"><i class="icon-angle-up"></i></a>
 	          </div>
 	      </footer>
 	      <!--footer end-->
@@ -197,35 +196,34 @@
 
   </section>
 
-  <!-- 右侧悬浮框————在线联系  -->
-  <div class="float-area" style="bottom: 115px;" title="在线联系">
+  <!-- 右侧悬浮框————留言 -->
+  <div class="float-area" style="bottom: 65px;" title="留言">
     <div class="activity">
-      <span style="border-radius: 0;background-color: #FFF;color:#999;font-size:25px;">
-        <i class="icon-phone"></i>
-      </span>
+      <a href="#" onclick="checkLogin()">
+        <span style="border-radius: 0;background-color: #FFF;color:#999;font-size:25px;">
+          <i class="icon-envelope"></i>
+        </span>
+      </a>
     </div>
   </div>
-
-  <!-- 右侧悬浮框————留言  -->
-  <div class="dropdown" title="留言">
-    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-      <div class="float-area" style="bottom: 65px;">
-        <div class="activity">
-	      <span style="border-radius: 0;background-color: #FFF;color:#999;font-size:25px;">
-	        <i class="icon-envelope"></i>
-	      </span>
-	    </div>
-	  </div>
-	</a>
-    <ul class="dropdown-menu extended notification" style="right: 65px;left: auto;bottom: 15px;position: fixed;top: auto;">
-      <div class="arrow-pro right"></div>
-        <li>
-          <input />
-        </li>
-        <li>
-          <a href="#">提交留言</a>
-        </li>
-      </ul>
+  <!-- 留言 Modal -->
+  <div id="message-modal" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+          <h4 class="modal-title">留言板</h4>
+        </div>
+        <div class="modal-body">
+          <form role="form">
+            <div class="form-group">               
+              <textarea id="message-info" rows="8" class="form-control" placeholder="谢谢您的支持，我们会尽快回复您的留言"></textarea>
+            </div>
+            <button type="button" class="btn btn-default" onclick="submitMessage()">发送留言</button>
+          </form>
+        </div>
+      </div>
+    </div>            
   </div>
 
   <!-- 右侧悬浮框————回到顶部  -->
@@ -416,6 +414,37 @@
 				}
 			});*/
 		}
+
+		/**
+		 * 留言前校验是否登录
+		 */
+		 function checkLogin(){
+		 	if (typeof(user) == 'undefined') {
+	            yeshidenotify('error', 'top right', '请先登录', '提示将在2秒内关闭', 2000);
+	            $('#login-modal').modal('show');
+	        } else {
+	        	$('#message-modal').modal('show');
+	        }
+		 }
+
+		/**
+		 * 提交留言
+		 */
+		 function submitMessage(){
+	        var message = $('#message-info').val().trim();
+		 	if(!message){
+		 		yeshidenotify('error', 'top right', '您的留言信息为空哟～', '提示将在2秒内关闭', 2000);
+		 		return;
+		 	}
+		 	$.post("/api/messages",{name:user.name,message:message},function(res){
+				if(res.code == -1){
+					yeshidenotify('error', 'top right', '留言提交失败，请稍等再试', '提示将在2秒内关闭', 2000);
+				}else{
+					yeshidenotify('error', 'top right', '留言提交成功，我们会尽快回复您，请耐心等待，谢谢！', '提示将在2秒内关闭', 2000);
+					$('#message-modal').modal('hide');
+				}
+			});
+		 }
 	</script>
 </body>
 </html>
