@@ -8,7 +8,7 @@
 							<input type="text" class="form-control" id="q-name" placeholder="名称">
 						</div>
 						<div class="form-group">
-							<select placeholder="所有状态" class="form-control" id="q-status">
+							<select placeholder="所有状态" class="form-control" id="q-status" style="width: 204px;">
 								<option value="">所有状态</option>
 								<option value="1">激活</option>
 								<option value="0">注销</option>
@@ -19,7 +19,7 @@
 						<button type="button" class="btn btn-success pull-right" onclick="showModal()">新增</button>
 					</form>
 				</header>
-				<div class="panel-body">
+				<div class="panel-body" style="padding-top: 0;">
 					<div class="adv-table">
 						<table id="users-table" class="display table table-bordered table-striped">
 							<thead>
@@ -84,7 +84,7 @@
 					</div>
 				</div>
 
-				<div class="modal-footer">
+				<div class="modal-footer" style="margin-top: 0;">
 					<button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
 					<button class="btn btn-success" type="submit">保存</button>
 				</div>
@@ -115,6 +115,7 @@
 			'sAjaxDataProp': 'result.data',
 			"paging": false,
 			'bFilter': false,
+			'bLengthChange': false,
 			'sInfo':false,
 			'bAutoWidth': false,
 			'bSort': false,
