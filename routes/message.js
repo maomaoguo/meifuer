@@ -93,13 +93,13 @@ router.route('/')
         var rm = new RestMsg();
         if (!req.session.name) {
             rm.errorMsg('请先登录!');
-            res.send(restmsg);
+            res.send(rm);
             return;
         }
         var msg = req.param('message');
         if (!msg) {
             rm.errorMsg('请输入留言信息!');
-            res.send(restmsg);
+            res.send(rm);
             return;
 
         }
@@ -118,4 +118,5 @@ router.route('/')
             res.send(rm);
         });
     });
+
 module.exports = router;

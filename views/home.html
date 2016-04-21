@@ -231,7 +231,7 @@
   <!-- 右侧悬浮框————回到顶部  -->
   <div class="float-area" style="bottom: 15px;" title＝"回到顶部">
     <div class="activity">
-      <a href="#container">
+      <a href="javascript:scroll(0,0)">
         <span style="border-radius: 0;background-color: #FFF;color:#999;font-size:25px;">
           <i class="icon-chevron-up"></i>
         </span>
@@ -449,8 +449,8 @@
 		 * 留言前校验是否登录
 		 */
 		 function checkLogin(){
-		 	var user = "<%= user%>";
-		 	if (typeof(user) == 'undefined') {
+		 	var user = <%= user%>;
+		 	if (user == null) {
 	            yeshidenotify('error', 'top right', '请先登录', '提示将在2秒内关闭', 2000);
 	            $('#login-modal').modal('show');
 	        } else {
