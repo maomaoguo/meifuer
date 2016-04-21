@@ -54,6 +54,7 @@ router.route('/login')
             }else{
                 req.session.uid = bo["_id"];
                 req.session.role = bo["role"];
+                req.session.name = bo["name"];
                 res.redirect('/');
             }
         })
@@ -67,8 +68,10 @@ router.get('/logout', function (req, res, next) {
     if (req.session) {
         req.session.uid = null;
         req.session.role = null;
+        req.session.name = null;
         res.clearCookie('uid');
         res.clearCookie('role');
+        res.clearCookie('name');
         req.session.destroy();
     }
     res.redirect('/');
@@ -78,7 +81,7 @@ router.get('/logout', function (req, res, next) {
  * 进入管理员页面
  */
 router.get('/index', function (req, res, next) {
-    if (req.session.uid) {
+    if (req.session.uid && (req.session.role == 1 || req.session.role == 2)) {
         //已登录
         var restmsg = new RestMsg();
         UserBO.findOne({_id:req.session.uid},function(err,bo){
@@ -94,11 +97,70 @@ router.get('/index', function (req, res, next) {
                 res.render('index',{
                     "user": bo
                 });
+            }else{
+                res.redirect('/');
             }
         });
     }else {
-        res.render('home',{"user":null});
+        res.redirect('/');
     }
+});
+
+router.route('/setting')
+    .get(function (req,res,next){
+        if (!req.session.uid) {
+            res.redirect('/');
+        }
+        var restmsg = new RestMsg();
+
+        UserBO.findById(req.session.uid,function(err,obj){
+            if (err) {
+                restmsg.errorMsg(err);
+                res.send(restmsg);
+                return;
+            }
+            if (obj) {
+                restmsg.successMsg();
+                obj.toObject();
+                delete obj.pwd;
+                restmsg.setResult(obj);
+                res.send( restmsg.successMsg());
+            } else {
+                res.send(restmsg.errorMsg());
+            }
+        });
+    });
+
+router.post('/account', function (req, res, next) {
+    if (!req.session.uid) {
+        res.redirect('/');
+    }
+    var restmsg = new RestMsg();
+
+    // 原密码验证
+    var oldPwd = req.param('oldPwd');
+    UserBO.findById(req.session.uid,function(err,obj){
+        if (err) {
+            restmsg.errorMsg(err);
+            res.send(restmsg);
+            return;
+        }
+        if (encrypt.md5Hash(oldPwd) === obj.pwd) {
+            var newPwd = req.param('newPwd');
+            UserBO.update({_id:req.session.uid}, {pwd:encrypt.md5Hash(newPwd)}, function(err,obj){
+                if (err) {
+                    restmsg.errorMsg(err);
+                    res.send(restmsg);
+                    return;
+                }
+                res.send( restmsg.successMsg());
+            });
+        } else {
+            restmsg.errorMsg('原密码错误！');
+            res.send(restmsg);
+            return;
+        }
+    });
 });
 
 module.exports = router;

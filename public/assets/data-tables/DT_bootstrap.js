@@ -19,13 +19,13 @@ var oLanguage={
 	"oPaginate": {
 		"sFirst": "首页",
 		"sLast": "尾页",
-		"sNext": "上一页",
-		"sPrevious": "下一页"
+		"sNext": "<i class='fa fa-caret-right'></i>",
+		"sPrevious": "<i class='fa fa-caret-left'></i>"
 	},
 	"sEmptyTable": "没有相关记录",
 	"sInfo": "第 _START_ 到 _END_ 条记录，共 _TOTAL_ 条",
 	"sInfoEmpty": "第 0 到 0 条记录，共 0 条",
-	"sInfoFiltered": "(从 _MAX_ 条记录中检索)",
+	"sInfoFiltered": "",
 	"sInfoPostFix": "",
 	"sDecimal": "",
 	"sThousands": ",",

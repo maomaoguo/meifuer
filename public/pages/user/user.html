@@ -1,366 +1,424 @@
-
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-	 <meta charset="utf-8">
-	<title>会员管理</title>
-	<style>
-	.datepicker{
-		z-index:1041;
-	}
-	</style>
-	</head>
- 	 <body>
-          <section class="wrapper">
-              <div class="mail-box">
-                      <div class="inbox-head">
-                          <h3>会员管理</h3>
-                          <form class="pull-right position" >
-                              <div class="input-append">
-                                  <input type="text"  placeholder="会员查询" class="sr-input" id="tel" name="tel">
-                                  <button type="button" class="btn sr-btn" onclick="telSearch()"><i  class="icon-search"></i></button>
-                              </div>
-                          </form>
-                      </div>
-                      
-                      <div class="inbox-body">
-	                      <div class="mail-option">
-	                          <div class="btn-group" >
-	                              <button type="button" class="btn btn-sm btn-primary" onclick="userAdd();">
-										<i class="icon-plus"></i> 新增
-								  </button>
-	                          </div>
-	                     </div>
-	                     <table id="userTable" class="table table-inbox table-hover">
-	                       <thead class="the-box dark full">
+<div class="wrapper">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="panel">
+				<header class="panel-heading">
+					<form class="form-inline" role="form">
+						<div class="form-group">
+							<input type="text" class="form-control input-sm" id="q-name" placeholder="名称">
+						</div>
+						<div class="form-group">
+							<select placeholder="所有状态" class="form-control input-sm" id="q-status">
+								<option value="">所有状态</option>
+								<option value="1">激活</option>
+								<option value="0">注销</option>
+							</select>
+						</div>
+						<button type="button" class="btn btn-info btn-sm" onclick="initTable()">查询</button>
+						<button type="reset" class="btn btn-warning btn-sm">重置</button>
+						<button type="button" class="btn btn-success pull-right btn-sm" onclick="showModal()">新增</button>
+					</form>
+				</header>
+				<div class="panel-body">
+					<div class="adv-table">
+						<table id="users-table" class="display table table-bordered table-striped">
+							<thead>
 							<tr>
-								<th style = "width:10% ">姓名</th>
-								<th width="10%">类型</th>
-								<th width="10%">性别</th>
-								<th width="10%">联系方式</th>
-								<th width="10%">QQ</th>
-								<th width="10%">操作</th>
+								<th>公司名称</th>
+								<th style="text-align: center;">状态</th>
+								<th>联系人</th>
+								<th>联系电话</th>
+								<th>业务员</th>
+								<th>积分</th>
+								<th style="text-align: center;">创建时间</th>
+								<th style="text-align: center;width: 120px;">操作</th>
 							</tr>
 							</thead>
-	                     </table>
-                  </div>
-              </div>
-          </section>
-  </body>
- 		 <!-----------新增会员Modal------------->
-          <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" id="userModal" class="modal fade">
-              <div class="modal-dialog">
-                  <div class="modal-content">
-					<form class="form-horizontal">
-                      <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                          <h4 class="modal-title" id="titleModal"></h4>
-                      </div>
-                     <div class="modal-body the-box no-border clearfix" style="padding-left: 50px; padding-right: 50px;">
-						<input name="uid" id="uid" type="hidden" /> 
-							<div class="form-group">
-									<label class="col-lg-3 control-label" for ="telphone" >手机号码：</label>
-									<div class="col-lg-9">
-										<input class="form-control input-sm" placeholder="手机号码" id="telphone" name="telphone" tabindex="1" maxlength="11"/>
-									</div>
-							</div>
-							<div class="form-group">
-								<label class="col-lg-3 control-label" for ="userName">姓  名：</label>
-								<div class="col-lg-9">
-									<input class="form-control input-sm" placeholder="姓名" id="userName" name="userName"  tabindex="2" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-lg-3 control-label" for= "sex">性  别：</label>
-								<div class="col-lg-9">
-									<select data-placeholder="请选择性别" name="sex" id="sex" class="form-control chosen-select input-sm" tabindex="3">
-										<option value=""></option>
-										<option value="1"> 男 </option>
-										<option value="2"> 女 </option>
-									</select>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-lg-3 control-label" for= "type">类  型：</label>
-									<div class="col-lg-9">
-										<select data-placeholder="请选择类型" name="type" id="type" class="form-control chosen-select input-sm" tabindex="4">
-											<option value=""></option>
-											<option value="2">普通会员(VIP)</option>
-											<option value="3">尊贵会员(VVIP)</option>
-										</select>
-									</div>
-							</div>
-							<div class="form-group">
-				                 <label for="endDate" class="col-lg-3 control-label">日  期：</label>
-                                  <div class="col-lg-9">
-                                      <input class="form-control input-sm "  size="16" type="text" value="" id="endDate" name="endDate" tabindex="5"/>
-                                  </div>
-				            </div>
-							<div class="form-group">
-								<label class="col-lg-3 control-label" for= "qq">Q Q：</label>
-								<div class="col-lg-9">
-									<input class="form-control input-sm" placeholder="QQ" id="qq" name="qq" tabindex="6" maxlength="12"/>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-lg-3 control-label" for="address" >住  址：</label>
-								<div class="col-lg-9">
-									<input class="form-control input-sm" placeholder="住址" id="address" name="address" tabindex="7" maxlength="255"/>
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-lg-3 control-label" for= "email">邮  箱：</label>
-								<div class="col-lg-9">
-									<input class="form-control input-sm" placeholder="邮箱" id="email" name="email" tabindex="8" />
-								</div>
-							</div>
-							<div class="form-group">
-									<label class="col-lg-3 control-label" for= "note">备  注：</label>
-									<div class="col-lg-9 controls">
-										<textarea class="form-control input-sm" placeholder="备注" id="note" name="note" tabindex="9" row ="5" maxlength=""></textarea>
-									</div>
-							</div>
+							<tbody></tbody>
+						</table>
 					</div>
-                    <div class="modal-footer">
-                        <button id="admin_button1" class="btn btn-success" type="button" onclick="userSave()">确定</button>
-                        <button id="admin_button2" data-dismiss="modal" class="btn btn-default" type="button">关闭</button>
-                   </div>
-					</form>
 				</div>
-                  </div>
-              </div>
-  <script>
-  	$(document).ready(function() {
-  		initUserTable();
-  		$('#endDate').datepicker({
-            format: 'mm-dd-yyyy'
-        });
+			</div>
+		</div>
+	</div>
+</div>
 
+<!-- 用户弹窗 Start -->
+<div class="modal fade" id="user-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="modal-title">新增客户</h4>
+			</div>
+			<form class="tasi-form" id="user-form" action="/api/users" method="post">
+				<input type="text" name="role" value="3" hidden="hidden">
+				<div class="modal-body">
+					<div class="form-group clearfix">
+						<label class="col-sm-3 control-label" for="login">登录名</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control input-sm" id="login" name="login">
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-3 control-label" for="name">公司名称</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control input-sm" id="name" name="name">
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-3 control-label" for="addr">地址</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control input-sm" id="addr" name="addr">
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-3 control-label" for="credit">积分</label>
+						<div class="col-sm-9">
+							<input type="number" class="form-control input-sm" id="credit" name="credit" value="0">
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-3 control-label" for="contact">联系人</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control input-sm" id="contact" name="contact">
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-3 control-label" for="tel">联系电话</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control input-sm" id="tel" name="tel">
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-3 control-label" for="qq">QQ</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control input-sm" id="qq" name="qq">
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-3 control-label" for="amaldar">经理</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control input-sm" id="amaldar" name="amaldar">
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-3 control-label" for="salesman">业务员</label>
+						<div class="col-sm-9">
+							<input type="text" class="form-control input-sm" id="salesman" name="salesman">
+						</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-3 control-label" for="desc">备注</label>
+						<div class="col-sm-9">
+							<textarea class="form-control" id="desc" name="desc"></textarea>
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button data-dismiss="modal" class="btn btn-default btn-sm" type="button">取消</button>
+					<button class="btn btn-success btn-sm" type="submit">保存</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- 用户弹窗 End -->
+
+<!-- 积分弹窗 Start -->
+<div class="modal fade" id="credit-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">客户赚取积分</h4>
+			</div>
+			<form class="tasi-form" id="credit-form"  method="put">
+				<div class="modal-body">
+					<div class="form-group">
+						<div class="alert alert-warning"> 赚取积分值为在积分原基础上的变化值，减积分填入负值！</div>
+					</div>
+					<div class="form-group clearfix">
+						<label class="col-sm-3 control-label" for="login">赚取积分值</label>
+						<div class="col-sm-9">
+							<input type="number" class="form-control input-sm" id="add-credit" name="credit">
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button data-dismiss="modal" class="btn btn-default btn-sm" type="button">取消</button>
+					<button class="btn btn-success btn-sm" type="submit">提交</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<!-- 积分弹窗 End -->
+
+<script>
+
+	//页面加载完成后执行
+	$(function() {
+		initTable();
+		initValidate();
 	});
-	//========= 一、会员列表 ============
-  function initUserTable() {
-			var table_option = {
-				"bProcessing" : false,
-				"bServerSide": true, //指定从服务器端获取数据 
-				"sAjaxSource" : 'api/users',
-				"fnServerData" : retrieveData, //与后台交互获取数据的处理函数 
-				"bDestroy" : true, //将之前的那个数据对象清除掉，换以新的对象设置
-				"bRetrieve" : true, //用于指明当执行dataTable绑定时，是否返回DataTable对象
-				"sAjaxDataProp" : "data",
-				"iDisplayLength" : 10,//每页显示行数
-				"bFilter" : false,
-				"bLengthChange" : false,
-				"bAutoWidth" : false,
-				"bSort" : false,
-				"aoColumns" : 
-					[{
-						"mData" : "name",
-					},{
-						"mData" : "type",
-						mRender : function(data, type, row) {
-							if (data == 2) {
-								return "普通会员";
-							}else if (data == 3) {
-								return "尊贵会员";
-							}else{
-								return "--";
-							}
-						},
-					},{
-						"mData" : "sex",
-						mRender : function(data, type, row) {
-							if (data == 1) {
-								return "男";
-							}else if (data == 2) {
-								return "女";
-							}else{
-								return "--";
-							}
-						},
-					},{
-						"mData" : "tel",
-					},{
-						"mData" : "qq",
-					},{
-						"mData" : "uid",
-						mRender : descRender,
-					}],
-				"oLanguage" : {
-					"sUrl" : "conf/de_DE.txt"
-				}
-			};
-			$("#userTable").dataTable().fnDestroy();
-			$("#userTable").dataTable(table_option);
-		}
-		
-		//与后台交互获取数据的处理函数 
-		function retrieveData(sSource, aoData, fnCallback) {
-			var rows;//默认一次加载10条.
-			var start;//从第几条开始
-			var tel = $('#tel').val();
-			$.each(eval(aoData), function(i, field) {//转换为json对象
-				if (field.name == "iDisplayStart") {
-					start = field.value;
-				}
-				if (field.name == "iDisplayLength") {
-					rows = field.value;
-				}
-			});
-			$.getJSON(sSource, {start:start,pagesize:rows,tel:tel}, function(msg) {
-				var json = JSON.stringify(msg.result);
-				var str = json.substring(0,json.length-1)+',"iTotalRecords":"'+msg.result.total+'","iTotalDisplayRecords":"'+msg.result.total+'"}';
-				fnCallback($.parseJSON(str));
-			});
-		}
-		
-		// 操作列渲染
-		function descRender(data, type, row) {
-				return	'<a data-toggle="tooltip" href="javascript: void(0);" onclick="userShow(' + row.uid + ')" title="查看" class="btn btn-xs btn-success"><i class="icon-file-text"></i></a>&nbsp;'
-				 		+ '<a class="btn btn-xs btn-info" href="javascript: void(0);" onclick="userEdit(' + row.uid + ')" data-toggle="tooltip" title="编辑"><i class="icon-edit"></i></a>&nbsp;'
-						+ '<a class="btn btn-xs btn-danger" href="javascript: void(0);" onclick="userDel(' + row.uid + ')" data-toggle="tooltip" title="删除"><i <i class="icon-remove"></i></a>&nbsp;'
-		}
-		//条件查询
-		function telSearch() {
-			initUserTable();
-		}
-		
-		//弹出新增会员弹出框
-		function userAdd() {
-			userEmpty();
-			$('#titleModal').text('新增会员');
-			$('#userModal').modal({backdrop:'static'});
-			$('#userModal').modal('show');
-		}
-		
-		//弹出查看会员弹出框
-		 function userShow(uid) {
-			userEmpty();
-			$('#titleModal').text('查看会员');
-			$('#userModal').modal({backdrop:'static'});
-			$('#userModal').modal('show');
-			$.ajax({
-				type : 'GET',//提交方式
-				url : 'api/users/' +uid,
-				data : {},
-				success : function(msg) {
-					if (msg.code == 1) {
-						$('#login').val(msg.result.login);
-						$('#telphone').val(msg.result.tel);
-						$('#userName').val(msg.result.name);
-						$('#sex').val(msg.result.sex);
-						$('#type').val(msg.result.type);
-						$('#qq').val(msg.result.qq);
-						$('#address').val(msg.result.address);
-						$('#email').val(msg.result.email);
-						$('#note').val(msg.result.note);
-						$('#endDate').val( new Date(msg.result.endtime).format("yyyy-MM-dd"));
-						$('#uid').val(uid);
+
+	//初始化table
+	function initTable() {
+		$('#users-table').dataTable().fnDestroy();
+
+		$('#users-table').DataTable({
+			'bProcessing': false,
+			'sAjaxSource': 'api/users',
+			'fnServerData': retrieveData,
+			'bDestroy': true,
+			'bRetrieve': true,
+			'sAjaxDataProp': 'result.data',
+			'bFilter': false,
+			'bAutoWidth': false,
+			'bSort': false,
+			'bLengthChange': false,
+			'aoColumns': [{
+				'mData': 'name'
+			}, {
+				'mData': 'status',
+				'mRender': function(data, type, row){
+					if(data == 1){
+						return '<span class="label label-success label-mini">激活</span>';
+					}else{
+						return '<span class="label label-warning label-mini">锁定</span>';
 					}
+				},
+				'fnCreatedCell': function(nTd) {
+					$(nTd).css('text-align', 'center');
 				}
-			});
-		}
-		
-		//弹出编辑会员弹出框
-		function userEdit(uid) {
-			userEmpty();
-			$('#titleModal').text('编辑会员');
-			$('#userModal').modal({backdrop:'static'});
-			$('#userModal').modal('show');
-			$.ajax({
-				type : 'GET',//提交方式
-				url : 'api/users/' +uid,
-				data : {},
-				success : function(msg) {
-					if (msg.code == 1) {
-						$('#login').val(msg.result.login);
-						$('#telphone').val(msg.result.tel);
-						$('#userName').val(msg.result.name);
-						$('#sex').val(msg.result.sex);
-						$('#qq').val(msg.result.qq);
-						$('#address').val(msg.result.address);
-						$('#email').val(msg.result.email);
-						$('#note').val(msg.result.note);
-						$('#type').val(msg.result.type);
-						$('#endDate').val( new Date(msg.result.endtime).format("yyyy-MM-dd"));
-						$('#uid').val(uid);
-					}
+			}, {
+				'mData': 'contact',
+				'mRender': dataRender
+			}, {
+				'mData': 'tel',
+				'mRender': dataRender
+			}, {
+				'mData': 'salesman',
+				'mRender': dataRender
+			}, {
+				'mData': 'credit'
+			}, {
+				'mData': 'create_at',
+				'mRender': function (data, type, row) {
+					return moment(data).format('YYYY-MM-DD HH:mm:ss');
+				},
+				'fnCreatedCell': function(nTd) {
+					$(nTd).css('text-align', 'center');
 				}
-			});
-		} 
-		
-		//清空内容
-		function userEmpty() {
-			$('#type').val('');
-			$('#endDate').val('');
-			$('#login').val('');
-			$('#telphone').val('');
-			$('#userName').val('');
-			$('#sex').val('');
-			$('#qq').val('');
-			$('#address').val('');
-			$('#email').val('');
-			$('#note').val('');
+			}, {
+				'mData': 'uid',
+				'mRender': descRender,
+				'fnCreatedCell': function(nTd) {
+					$(nTd).css('text-align', 'center');
+				}
+			}]
+		});
+	}
+
+	//渲染时间列
+	function dataRender(data, type, row) {
+		return data?data:'--';
+	}
+
+	//渲染操作列
+	function descRender(data, type, row) {
+		var str ='<button data-id="'+ data + '" class="btn btn-info btn-xs" onclick="addCredit(this)" data-toggle="tooltip" title="赚取积分"><i class="icon-ticket"></i></button>&nbsp;&nbsp;'
+				+'<button data-id="'+ data + '" class="btn btn-primary btn-xs" onclick="showUser(this)" data-toggle="tooltip" title="编辑"><i class="icon-pencil"></i></button>&nbsp;&nbsp;';
+		if(row.status == 0){
+			str += '<button class="btn btn-success btn-xs" data-id="'+ data + '" onclick="changeStatus(this,1)" data-toggle="tooltip" title="激活"><i class="icon-ok"></i></button>';
+		}else{
+			str += '<button data-id="'+ data + '" onclick="changeStatus(this,0)" class="btn btn-danger btn-xs" data-toggle="tooltip" title="注销"><i class="icon-trash "></i></button>';
 		}
-		
-		//会员新增
-		function userSave() {
-			var telphone =  $('#telphone').val();
-			var userName = $('#userName').val();
-			var type= $('#type').val();
-			var endDate = $('#endDate').val();
-			var sex = $('#sex').val();
-			var qq = $('#qq').val();
-			var address = $('#address').val();
-			var email = $('#email').val();
-			var note = $('#note').val(); 
-			var uid = $('#uid').val();
-			var url = "";
-			if(isempty(uid)){
-				url ="api/users/add";
-			}else{
-				url ="api/users/"+ uid;
+		return  str;
+	}
+
+	// 异步获取table数据
+	function retrieveData(sSource, aoData, fnCallback) {
+		var name = $('#q-name').val();
+		var status = $('#q-status').val();
+		$.getJSON(sSource, {
+			role: 3,
+			status: status,
+			name: name
+		}, function(rm) {
+			if (rm.code == 1) {
+				fnCallback(rm);
+			} else {
+				yeshidenotify('error', 'top right', '查询失败！', '提示将在2秒内关闭', 2000);
 			}
+		});
+	}
+
+	//注销或激活
+	function changeStatus(v,status){
+		var uid = $(v).data('id');
+		$.ajax({
+			url: 'api/users/'+uid,
+			type: 'PUT',
+			data:{status:status},
+			success: function(result) {
+				if(rm.code == 1){
+					initTable();
+					yeshidenotify('success', 'top right', '操作成功！', '提示将在2秒内关闭', 2000);
+				}else {
+					yeshidenotify('error', 'top right', '操作失败！', '提示将在2秒内关闭', 2000);
+				}
+			}
+		});
+	}
+
+	//form表单校验
+	function initValidate() {
+		$('#user-form')
+				.on('init.field.bv', function(e, data) {
+					var $parent = data.element.parents('.form-group'),
+							$icon   = $parent.find('.form-control-feedback[data-bv-icon-for="' + data.field + '"]');
+
+					$icon.on('click.clearing', function () {
+						if ($icon.hasClass('glyphicon-remove')) {
+							data.bv.resetField(data.element);
+						}
+					});
+				})
+				.bootstrapValidator({
+					excluded: ':disabled',
+					feedbackIcons: {
+						valid: 'glyphicon glyphicon-ok',
+						invalid: 'glyphicon glyphicon-remove',
+						validating: 'glyphicon glyphicon-refresh'
+					},
+					fields: {
+						'name': {
+							validators: {
+								notEmpty: {
+									message: '用户姓名不能为空！'
+								}
+							}
+						},
+						'login': {
+							validators: {
+								notEmpty: {
+									message: '登录名不能为空！'
+								}
+							}
+						},
+						'credit': {
+							validators: {
+								integer: {
+									message: '请输入整数！'
+								}
+							}
+						}
+					}
+				}) .on('success.form.bv', function (e) {
+			e.preventDefault();
+
+			var $form = $(e.target);
+			$.post($form.attr('action'),$form.serialize(),
+					function (msg) {
+						if (msg.code == 1) {
+							$('#user-modal').modal('hide');
+							yeshidenotify('success', 'top right', "操作成功", "提示将在2秒内关闭",2000);
+							initTable();
+						} else {
+							yeshidenotify('error', 'top right',msg.msg, "提示将在2秒内关闭",2000);
+						}
+					}, 'json');
+		});
+
+		$('#credit-form')
+				.on('init.field.bv', function(e, data) {
+					var $parent = data.element.parents('.form-group'),
+							$icon   = $parent.find('.form-control-feedback[data-bv-icon-for="' + data.field + '"]');
+
+					$icon.on('click.clearing', function () {
+						if ($icon.hasClass('glyphicon-remove')) {
+							data.bv.resetField(data.element);
+						}
+					});
+				})
+				.bootstrapValidator({
+					excluded: ':disabled',
+					feedbackIcons: {
+						valid: 'glyphicon glyphicon-ok',
+						invalid: 'glyphicon glyphicon-remove',
+						validating: 'glyphicon glyphicon-refresh'
+					},
+					fields: {
+						'credit': {
+							validators: {
+								integer: {
+									message: '请输入整数！'
+								}
+							}
+						}
+					}
+				}) .on('success.form.bv', function (e) {
+			e.preventDefault();
+
+			var $form = $(e.target);
 			$.ajax({
-				type : "POST",
-				 url : url,
-				data : {
-					login: telphone,
-					telphone: telphone,
-					userName: userName,
-					sex: sex,
-					qq: qq,
-					address: address,
-					email: email,
-					note: note,
-					type: type,
-					endDate : endDate
-				},success : function(msg) {
-					if (msg.code == 1) {
-						yeshidenotify('success', 'top right', msg.msg, "提示将在3秒内关闭",3000);
-						$('#userModal').modal('hide');
-						initUserTable();
+				type: "PUT",
+				url: $form.attr('action'),
+				data: $form.serialize(),
+				dataType: "json",
+				success: function(data){
+					if (data.code == 1) {
+						$('#credit-modal').modal('hide');
+						yeshidenotify('success', 'top right', "操作成功", "提示将在2秒内关闭",2000);
+						initTable();
 					} else {
-						yeshidenotify('error', 'top right', msg.msg, "提示将在3秒内关闭",3000);
+						yeshidenotify('error', 'top right',data.msg, "提示将在2秒内关闭",2000);
 					}
 				}
-			}); 
+			});
+		});
+	}
+
+	//显示modal
+	function showModal(){
+		$("#user-form")[0].reset();
+		$("#user-form").data('bootstrapValidator').resetForm();
+		$("#user-form").attr('action','/api/users')
+		$('modal-title').text('新增客户');
+		$("#login").removeAttr('readonly');
+		$("#name").removeAttr('readonly');
+		$("#credit").removeAttr("readonly");
+		$('#user-modal').modal({backdrop: 'static'});
+		$('#user-modal').modal('show');
+	}
+
+	//详情展示
+	function showUser(v) {
+		showModal();
+		var uid = $(v).data('id');
+		$("#user-form").attr('action','/api/users/'+uid);
+		$('modal-title').text('修改客户信息');
+		var dt = $('#users-table').DataTable();
+		var data = dt.row($(v).closest('tr')).data();
+		for(var key in data){
+			$("#"+key).val(data[key]);
 		}
-		
-		//会员删除
-		function userDel(uid) {
-			$.ajax({
-				type : "DELETE",
-				 url : "api/users/" + uid,
-				data : {},
-				success : function(msg) {
-					if (msg.code == 1) {
-						yeshidenotify('success', 'top right', msg.msg, "提示将在3秒内关闭",3000);
-						initUserTable();
-					} else {
-						yeshidenotify('error', 'top right', msg.msg, "提示将在3秒内关闭",3000);
-					}
-				}
-			}); 
-		}
-  </script>
-</html>
+		$("#login").attr("readonly",'readonly');
+		$("#credit").attr("readonly",'readonly');
+		$("#name").attr("readonly",'readonly');
+	}
+
+	//赚取积分
+	function addCredit(v){
+		var uid = $(v).data('id');
+		$("#credit-form")[0].reset();
+		$("#credit-form").data('bootstrapValidator').resetForm();
+		$("#credit-form").attr('action','/api/users/'+uid+"/credit")
+		$('#credit-modal').modal({backdrop: 'static'});
+		$('#credit-modal').modal('show');
+	}
+</script>
