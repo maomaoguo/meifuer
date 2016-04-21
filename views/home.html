@@ -97,6 +97,15 @@
     text-decoration: none;
     transition: all 0.3s ease 0s;
 }
+.float-area {
+	position: fixed;
+	right: 15px;
+	opacity: 0.7;
+	cursor: pointer;
+}
+.arrow-pro.right:after {
+    top: 0;
+}
 
 </style>
 </head>
@@ -187,6 +196,49 @@
     </section>
 
   </section>
+
+  <!-- 右侧悬浮框————在线联系  -->
+  <div class="float-area" style="bottom: 115px;" title="在线联系">
+    <div class="activity">
+      <span style="border-radius: 0;background-color: #FFF;color:#999;font-size:25px;">
+        <i class="icon-phone"></i>
+      </span>
+    </div>
+  </div>
+
+  <!-- 右侧悬浮框————留言  -->
+  <div class="dropdown" title="留言">
+    <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+      <div class="float-area" style="bottom: 65px;">
+        <div class="activity">
+	      <span style="border-radius: 0;background-color: #FFF;color:#999;font-size:25px;">
+	        <i class="icon-envelope"></i>
+	      </span>
+	    </div>
+	  </div>
+	</a>
+    <ul class="dropdown-menu extended notification" style="right: 65px;left: auto;bottom: 15px;position: fixed;top: auto;">
+      <div class="arrow-pro right"></div>
+        <li>
+          <input />
+        </li>
+        <li>
+          <a href="#">提交留言</a>
+        </li>
+      </ul>
+  </div>
+
+  <!-- 右侧悬浮框————回到顶部  -->
+  <div class="float-area" style="bottom: 15px;" title＝"回到顶部">
+    <div class="activity">
+      <a href="#container">
+        <span style="border-radius: 0;background-color: #FFF;color:#999;font-size:25px;">
+          <i class="icon-chevron-up"></i>
+        </span>
+      </a>
+    </div>
+  </div>
+
 
 	<!-- Modal -->
 	<div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="pwd-modal" class="modal fade">
