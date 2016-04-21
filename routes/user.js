@@ -29,7 +29,7 @@ _privateFun.prsBO2VO2 = function(obj){
             "desc": ret.desc,//"<用户描述>",
             "status":ret.status,//<用户状态 0无效|1有效>,
             "salesman":ret.salesman,//业务员
-            "creat_at":ret.creat_at//<用户注册时间>
+            "create_at":ret.creat_at//<用户注册时间>
         }
     } });
     return result;
@@ -55,6 +55,10 @@ router.route('/')
         if(salesman){
             query.salesman = new RegExp(salesman,'i');
         }
+
+        //过滤掉自己
+        query._id = {$ne: req.session.uid};
+        
         UserBO.find(query,function(err,list){
             if (err) {
                 restmsg.errorMsg(err);
@@ -106,6 +110,7 @@ router.route('/')
         user.addr = req.param('addr');
         user.salesman = req.param("salesman");
 
+        console.log(user);
         UserBO.count({login:login},function(err,num){
             if (err) {
                 restmsg.errorMsg(err);

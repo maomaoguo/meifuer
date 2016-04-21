@@ -5,17 +5,18 @@
 				<header class="panel-heading">
 					<form class="form-inline" role="form">
 						<div class="form-group">
-							<input type="text" class="form-control" id="q-name" placeholder="名称">
+							<input type="text" class="form-control input-sm" id="q-name" placeholder="名称">
 						</div>
 						<div class="form-group">
-							<select placeholder="所有状态" class="form-control" id="q-status">
+							<select placeholder="所有状态" class="form-control input-sm" id="q-status">
+								<option value="">所有状态</option>
 								<option value="1">激活</option>
 								<option value="0">注销</option>
 							</select>
 						</div>
-						<button type="button" class="btn btn-info" onclick="initTable()">查询</button>
-						<button type="reset" class="btn btn-warning">重置</button>
-						<button type="button" class="btn btn-success pull-right" onclick="showModal()">新增</button>
+						<button type="button" class="btn btn-info btn-sm" onclick="initTable()">查询</button>
+						<button type="reset" class="btn btn-warning btn-sm">重置</button>
+						<button type="button" class="btn btn-success pull-right btn-sm" onclick="showModal()">新增</button>
 					</form>
 				</header>
 				<div class="panel-body">
@@ -24,8 +25,9 @@
 							<thead>
 							<tr>
 								<th>名称</th>
+								<th style="text-align: center;">状态</th>
 								<th style="text-align: center;">电话</th>
-								<th>qq</th>
+								<th style="text-align: center;">qq</th>
 								<th style="text-align: center;">创建时间</th>
 								<th style="text-align: center;">操作</th>
 							</tr>
@@ -47,34 +49,34 @@
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
 				<h4 class="modal-title" id="modal-title">新增管理员</h4>
 			</div>
-			<form class="form-horizontal tasi-form" id="user-form" action="/api/users">
+			<form class="tasi-form" id="user-form" action="/api/users" method="post">
+				<input type="text" class="form-control input-sm" id="role" name="role" value="2" hidden="hidden">
 				<div class="modal-body">
-					<div class="form-group">
+					<div class="form-group clearfix">
 						<label class="col-sm-3 control-label" for="login">登录名</label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control input-sm" id="login" name="login">
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group clearfix">
 						<label class="col-sm-3 control-label" for="name">用户姓名</label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control input-sm" id="name" name="name">
-							<input type="text" class="form-control input-sm" id="role" name="role" value="2" hidden>
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group clearfix">
 						<label class="col-sm-3 control-label" for="tel">联系电话</label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control input-sm" id="tel" name="tel">
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group clearfix">
 						<label class="col-sm-3 control-label" for="qq">QQ</label>
 						<div class="col-sm-9">
 							<input type="text" class="form-control input-sm" id="qq" name="qq">
 						</div>
 					</div>
-					<div class="form-group">
+					<div class="form-group clearfix">
 						<label class="col-sm-3 control-label" for="desc">备注</label>
 						<div class="col-sm-9">
 							<textarea class="form-control" id="desc" name="desc"></textarea>
@@ -83,8 +85,8 @@
 				</div>
 
 				<div class="modal-footer">
-					<button data-dismiss="modal" class="btn btn-default" type="button">取消</button>
-					<button class="btn btn-success" type="submit" onclick="saveUser()">保存</button>
+					<button data-dismiss="modal" class="btn btn-default btn-sm" type="button">取消</button>
+					<button class="btn btn-success btn-sm" type="submit">保存</button>
 				</div>
 			</form>
 		</div>
@@ -97,13 +99,14 @@
 	//页面加载完成后执行
 	$(function() {
 		initTable();
+		initValidate();
 	});
 
 	//初始化table
 	function initTable() {
-		$('#users-table').dataTable().fnDestroy();
+		$('#users-table').DataTable().fnDestroy();
 
-		$('#users-table').dataTable({
+		$('#users-table').DataTable({
 			'bProcessing': false,
 			'bServerSide': true,
 			'sAjaxSource': 'api/users',
@@ -111,12 +114,24 @@
 			'bDestroy': true,
 			'bRetrieve': true,
 			'sAjaxDataProp': 'result',
-			"paging": false
+			"paging": false,
 			'bFilter': false,
 			'bAutoWidth': false,
 			'bSort': false,
 			'aoColumns': [{
 				'mData': 'name'
+			}, {
+				'mData': 'status',
+				'mRender': function(data, type, row){
+					if(data == 1){
+						return '<span class="label label-success label-mini">激活</span>';
+					}else{
+						return '<span class="label label-warning label-mini">锁定</span>';
+					}
+				},
+				'fnCreatedCell': function(nTd) {
+					$(nTd).css('text-align', 'center');
+				}
 			}, {
 				'mData': 'tel',
 				'mRender': dataRender,
@@ -125,7 +140,10 @@
 				}
 			}, {
 				'mData': 'qq',
-				'mRender': dataRender
+				'mRender': dataRender,
+				'fnCreatedCell': function(nTd) {
+					$(nTd).css('text-align', 'center');
+				}
 			}, {
 				'mData': 'create_at',
 				'mRender': function (data, type, row) {
@@ -151,11 +169,11 @@
 
 	//渲染操作列
 	function descRender(data, type, row) {
-		var str = '<a data-id="'+ data + '" onclick="showUser(this)" align="center" href="javascript:;" data-toggle="tooltip" title="编辑"><i class="icon-edit text-warning"></i></a>';
+		var str = '<button data-id="'+ data + '" class="btn btn-primary btn-xs" onclick="showUser(this)" data-toggle="tooltip" title="编辑"><i class="icon-pencil"></i></button>&nbsp;&nbsp;';
 		if(row.status == 0){
-			str += '<a data-id="'+ data + '" onclick="changeStatus(this,1)" align="center" href="javascript:;" data-toggle="tooltip" title="激活"><i class="icon-edit text-warning"></i></a>';
+			str += '<button class="btn btn-success btn-xs" data-id="'+ data + '" onclick="changeStatus(this,1)" data-toggle="tooltip" title="激活"><i class="icon-ok"></i></button>';
 		}else{
-			str += '<a data-id="'+ data + '" onclick="changeStatus(this,0)" align="center" href="javascript:;" data-toggle="tooltip" title="注销"><i class="icon-edit text-warning"></i></a>';
+			str += '<button data-id="'+ data + '" onclick="changeStatus(this,0)" class="btn btn-danger btn-xs" data-toggle="tooltip" title="注销"><i class="icon-trash "></i></button>';
 		}
 		return  str;
 	}
@@ -246,7 +264,7 @@
 								yeshidenotify('success', 'top right', "操作成功", "提示将在2秒内关闭",2000);
 								initTable();
 							} else {
-								yeshidenotify('error', 'top right', "操作失败", "提示将在2秒内关闭",2000);
+								yeshidenotify('error', 'top right',msg.msg, "提示将在2秒内关闭",2000);
 							}
 						}, 'json');
 			});
@@ -254,7 +272,7 @@
 
 	//显示modal
 	function showModal(){
-		$("#user-form").[0].reset();
+		$("#user-form")[0].reset();
 		$("#user-form").attr('action','/api/users')
 		$('modal-title').text('新增管理员');
 		$("#login").removeAttr('readonly');

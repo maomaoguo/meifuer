@@ -16,14 +16,16 @@ router.get('/', function(req, res) {
     if (req.session.uid) {
         //已登录
         var restmsg = new RestMsg();
-        UserBO.find({_id:req.session.uid},function(err,bo){
+        UserBO.findOne({_id:req.session.uid},function(err,bo){
             if (err) {
                 restmsg.errorMsg(err);
                 res.send(restmsg);
                 return;
             }
             if(bo){
-                bo.password = '******';
+                bo.toObject();
+                bo.pwd ="****";
+                bo.login ="****";
                 res.render('home',{
                     "user": bo
                 });
@@ -38,20 +40,23 @@ router.get('/', function(req, res) {
  * 登录相关
  */
 router.route('/login')
-    .get(function(req, res) {
-        if (req.session.uid) {
-            res.redirect('/');
-        } else {
-            res.render('login');
-        }
-    })
     .post(function(req, res) {
-        if (req.body.username == "admin" && req.body.pwd == 'admin') {
-            req.session.uid = 1;
-            res.redirect('/');
-        } else {
-            res.render('login');
-        }
+        var restmsg = new RestMsg();
+        UserBO.findOne({login:req.body.username,pwd:encrypt.md5Hash(req.body.pwd),status:1},function(err,bo){
+            if (err){
+                restmsg.errorMsg(err);
+                res.send(restmsg);
+                return;
+            }
+            if(!bo) {
+                restmsg.errorMsg('用户名或密码错误！');
+                res.send(restmsg);
+            }else{
+                req.session.uid = bo["_id"];
+                req.session.role = bo["role"];
+                res.redirect('/');
+            }
+        })
 
     });
 
@@ -61,14 +66,39 @@ router.route('/login')
 router.get('/logout', function (req, res, next) {
     if (req.session) {
         req.session.uid = null;
-        req.session.name = null;
-        req.session.credit = null;
+        req.session.role = null;
         res.clearCookie('uid');
-        res.clearCookie('name');
-        res.clearCookie('credit');
+        res.clearCookie('role');
         req.session.destroy();
     }
-    res.redirect('/home');
+    res.redirect('/');
+});
+
+/**
+ * 进入管理员页面
+ */
+router.get('/index', function (req, res, next) {
+    if (req.session.uid) {
+        //已登录
+        var restmsg = new RestMsg();
+        UserBO.findOne({_id:req.session.uid},function(err,bo){
+            if (err) {
+                restmsg.errorMsg(err);
+                res.send(restmsg);
+                return;
+            }
+            if(bo){
+                bo.toObject();
+                bo.pwd ="****";
+                bo.login ="****";
+                res.render('index',{
+                    "user": bo
+                });
+            }
+        });
+    }else {
+        res.render('home',{"user":null});
+    }
 });
 
 module.exports = router;
