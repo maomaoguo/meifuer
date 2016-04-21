@@ -91,22 +91,21 @@ router.route('/')
     })
     .post(function (req, res, next) {
         var rm = new RestMsg();
-        var name = req.param('name');
-        if (!name) {
+        if (!req.session.name) {
             rm.errorMsg('请先登录!');
-            res.send(restmsg);
+            res.send(rm);
             return;
         }
         var msg = req.param('message');
         if (!msg) {
             rm.errorMsg('请输入留言信息!');
-            res.send(restmsg);
+            res.send(rm);
             return;
 
         }
         var message = new Message();
 
-        message.mes_name = name;
+        message.mes_name = req.session.name;
         message.mes_at = new Date();
         message.message = msg;
         message.save(function (err, bo) {
@@ -119,4 +118,5 @@ router.route('/')
             res.send(rm);
         });
     });
+
 module.exports = router;
