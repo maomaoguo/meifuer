@@ -29,8 +29,8 @@ app.use(multer({dest: './uploads/'})); // for parsing multipart/form-data
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public'),{index:false}));
 app.use(session({
-    secret: 'budnode',
-    name: 'budnode',
+    secret: 'meifuer',
+    name: 'meifuer',
     saveUninitialized: false, // don't create session until something stored
     resave: false,//don't save session if unmodified
     unset:'destroy',//The session will be destroyed (deleted) when the response ends.
@@ -40,15 +40,6 @@ app.use(session({
 }));
 
 app.use('/', auth);
-
-//登录拦截器
-app.use(function (req, res, next) {
-    var url = req.originalUrl;
-    if (url != "/login" && !req.session.uid) {
-        return res.redirect("/login");
-    }
-    next();
-});
 app.use('/api', api);
 
 // catch 404 and forward to error handler

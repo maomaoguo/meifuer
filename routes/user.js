@@ -29,7 +29,7 @@ _privateFun.prsBO2VO2 = function(obj){
             "desc": ret.desc,//"<用户描述>",
             "status":ret.status,//<用户状态 0无效|1有效>,
             "salesman":ret.salesman,//业务员
-            "creat_at":ret.creat_at//<用户注册时间>
+            "create_at":ret.creat_at//<用户注册时间>
         }
     } });
     return result;
@@ -55,6 +55,10 @@ router.route('/')
         if(salesman){
             query.salesman = new RegExp(salesman,'i');
         }
+
+        //过滤掉自己
+        query._id = {$ne: req.session.uid};
+        
         UserBO.find(query,function(err,list){
             if (err) {
                 restmsg.errorMsg(err);
@@ -106,6 +110,7 @@ router.route('/')
         user.addr = req.param('addr');
         user.salesman = req.param("salesman");
 
+        console.log(user);
         UserBO.count({login:login},function(err,num){
             if (err) {
                 restmsg.errorMsg(err);
@@ -164,6 +169,59 @@ router.route('/')
         })
     });
 
+//改变积分
+router.route('/:uid/credit')
+    .put(function(req,res,next){
+        var uid = req.params.uid;
+        var credit = req.param('credit');
+        var restmsg = new RestMsg();
+
+        UserBO.findOne({_id:uid},function(err,pro){
+            if (err){
+                restmsg.errorMsg(err);
+                res.send(restmsg);
+                return;
+            }
+
+            if(pro) {
+                var log = new LogBO();
+                log.op_credit = Number(credit);
+                UserBO.update({_id:uid},{credit:log.op_credit+pro.credit},function(err,obj){
+                    if (err) {
+                        restmsg.errorMsg(err);
+                        res.send(restmsg);
+                        return;
+                    }
+
+
+                    log.op_id = req.session.uid;
+                    log.op_name = req.session.name;
+                    log.oped_id = uid;
+                    log.oped_name = pro.name;
+                    log.pre_credit = pro.credit;
+                    log.credit = log.op_credit+pro.credit;
+                    log.type = 1;//积分攒取；
+                    log.creat_at = new Date();
+                    log.desc = '成功攒取'+credit+'积分';
+                    log.save(function(err,obj) {
+                        if (err) {
+                            restmsg.errorMsg(err);
+                            res.send(restmsg);
+                            return;
+                        }
+                        res.send(restmsg.successMsg());
+                    });
+
+                });
+
+            }else{
+                restmsg.errorMsg('客户不存在');
+                res.send(restmsg);
+            }
+        })
+
+    });
+
 router.route('/:uid')
     //修改用户
     .post(function (req, res, next) {
@@ -215,57 +273,5 @@ router.route('/:uid')
             res.send( restmsg.successMsg());
         });
     });
-
-//改变积分
-router.route('/:uid/credit').put(function(req,res,next){
-    var uid = req.params.uid;
-    var credit = req.param('credit');
-    var restmsg = new RestMsg();
-
-    UserBO.findOne({_id:uid},function(err,pro){
-        if (err){
-            restmsg.errorMsg(err);
-            res.send(restmsg);
-            return;
-        }
-
-        if(pro) {
-            var log = new LogBO();
-            log.op_credit = Number(credit);
-            UserBO.update({_id:uid},{credit:log.op_credit+pro.credit},function(err,obj){
-                if (err) {
-                    restmsg.errorMsg(err);
-                    res.send(restmsg);
-                    return;
-                }
-
-
-                log.op_id = req.session.uid;
-                log.op_name = req.session.name;
-                log.oped_id = uid;
-                log.oped_name = pro.name;
-                log.pre_credit = pro.credit;
-                log.credit = log.op_credit+pro.credit;
-                log.type = 1;//积分攒取；
-                log.creat_at = new Date();
-                log.desc = '成功攒取'+credit+'积分';
-                log.save(function(err,obj) {
-                    if (err) {
-                        restmsg.errorMsg(err);
-                        res.send(restmsg);
-                        return;
-                    }
-                    res.send(restmsg.successMsg());
-                });
-
-            });
-
-        }else{
-            restmsg.errorMsg('客户不存在');
-            res.send(restmsg);
-        }
-    })
-
-});
 
 module.exports = router;
