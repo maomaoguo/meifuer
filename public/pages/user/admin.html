@@ -283,7 +283,7 @@
 		showModal();
 		var uid = $(v).data('id');
 		$("#user-form").attr('action','/api/users/'+uid);
-		$('modal-title').text('修改管理员信息');
+		$('#modal-title').text('修改管理员信息');
 		var dt = $('#users-table').DataTable();
 		var data = dt.row($(v).closest('tr')).data();
 		$("#login").val(data.login).attr("readonly",'readonly');
