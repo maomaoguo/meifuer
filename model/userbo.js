@@ -6,7 +6,7 @@ var mongoose = require('../db/db');
 
 var userSchema = mongoose.Schema({
     "login":String,//登录名
-    "psw":String,//密码
+    "pwd":String,//密码
     "name": String,//"<用户名称>",
     "role":Number,//用户角色，1超级管理员（只有一个），可添加管理员，2普通管理员（无增删改查管理员的权限），3，客户
     "contact":String,//联系人

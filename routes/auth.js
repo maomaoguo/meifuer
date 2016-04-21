@@ -54,6 +54,7 @@ router.route('/login')
             }else{
                 req.session.uid = bo["_id"];
                 req.session.role = bo["role"];
+                req.session.name = bo["name"];
                 res.redirect('/');
             }
         })
@@ -67,8 +68,10 @@ router.get('/logout', function (req, res, next) {
     if (req.session) {
         req.session.uid = null;
         req.session.role = null;
+        req.session.name = null;
         res.clearCookie('uid');
         res.clearCookie('role');
+        res.clearCookie('name');
         req.session.destroy();
     }
     res.redirect('/');

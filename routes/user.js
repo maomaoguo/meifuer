@@ -71,6 +71,7 @@ router.route('/')
             var restmsg = new RestMsg();
             restmsg.successMsg();
             restmsg.setResult(list);
+            restmsg.total = list.length;
             res.send(restmsg);
         })
     })
@@ -80,7 +81,6 @@ router.route('/')
         var user = new UserBO();
         var restmsg = new RestMsg();
         var name = req.param('name');
-        //var pwd = req.param('pwd');
         var login = req.param('login');
         var role = req.param('role');
         var credit = req.param('credit');
@@ -109,8 +109,8 @@ router.route('/')
         user.creat_at = new Date();
         user.addr = req.param('addr');
         user.salesman = req.param("salesman");
-
         console.log(user);
+
         UserBO.count({login:login},function(err,num){
             if (err) {
                 restmsg.errorMsg(err);
@@ -259,7 +259,7 @@ router.route('/:uid')
         })
     })
 
-    //激活or注销or改变积分
+    //激活or注销
     .put(function(req,res,next){
         var uid = req.params.uid;
         var status = req.param('status');

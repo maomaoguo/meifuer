@@ -50,7 +50,7 @@
 				<h4 class="modal-title" id="modal-title">新增管理员</h4>
 			</div>
 			<form class="tasi-form" id="user-form" action="/api/users" method="post">
-				<input type="text" class="form-control input-sm" id="role" name="role" value="2" hidden="hidden">
+				<input type="text"  name="role" value="2" hidden="hidden">
 				<div class="modal-body">
 					<div class="form-group clearfix">
 						<label class="col-sm-3 control-label" for="login">登录名</label>
@@ -104,7 +104,7 @@
 
 	//初始化table
 	function initTable() {
-		$('#users-table').DataTable().fnDestroy();
+		$('#users-table').dataTable().fnDestroy();
 
 		$('#users-table').DataTable({
 			'bProcessing': false,
@@ -116,6 +116,7 @@
 			'sAjaxDataProp': 'result',
 			"paging": false,
 			'bFilter': false,
+			'sInfo':false,
 			'bAutoWidth': false,
 			'bSort': false,
 			'aoColumns': [{
@@ -204,11 +205,7 @@
 			data:{status:status},
 			success: function(result) {
 				if(rm.code == 1){
-					if(status == 1){
-						$(this).replaceWith('<a data-id="'+ data + '" onclick="changeStatus(this,0)" align="center" href="javascript:;" data-toggle="tooltip" title="注销"><i class="icon-edit text-warning"></i></a>');
-					}else{
-						$(this).replaceWith('<a data-id="'+ data + '" onclick="changeStatus(this,1)" align="center" href="javascript:;" data-toggle="tooltip" title="激活"><i class="icon-edit text-warning"></i></a>');
-					}
+					initTable();
 					yeshidenotify('success', 'top right', '操作成功！', '提示将在2秒内关闭', 2000);
 				}else {
 					yeshidenotify('error', 'top right', '操作失败！', '提示将在2秒内关闭', 2000);
@@ -286,7 +283,7 @@
 		showModal();
 		var uid = $(v).data('id');
 		$("#user-form").attr('action','/api/users/'+uid);
-		$('modal-title').text('修改管理员');
+		$('modal-title').text('修改管理员信息');
 		var dt = $('#users-table').DataTable();
 		var data = dt.row($(v).closest('tr')).data();
 		$("#login").val(data.login).attr("readonly",'readonly');

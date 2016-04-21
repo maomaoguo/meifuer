@@ -25,7 +25,7 @@
     <link href="css/style.css" rel="stylesheet">
     <link href="css/style-responsive.css" rel="stylesheet" />
     <link href="assets/jquery-notifyjs/styles/metro/notify-metro.css" rel="stylesheet" />
-    <link href="assets/advanced-datatable/media/css/jquery.dataTables.css" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/data-tables/DT_bootstrap.css"/>
     <link href="assets/validator/bootstrapValidator.min.css" rel="stylesheet" />
     <link href="assets/fileinput/css/fileinput.min.css" rel="stylesheet" />
 
@@ -61,7 +61,7 @@
                         <div class="log-arrow-up"></div>
                         <li><a href="javascript:loadMainPage('pages/user/admin-info.html');"><i class=" icon-suitcase"></i>个人信息</a></li>
                         <li><a href="javascript:loadMainPage('pages/user/modify-password.html');"><i class="icon-cog"></i> 修改密码</a></li>
-                        <li><a href="j_spring_security_logout"><i class="icon-key"></i> 退出</a></li>
+                        <li><a href="/logout"><i class="icon-key"></i> 退出</a></li>
                     </ul>
                 </li>
                 <!-- user login dropdown end -->
@@ -79,7 +79,9 @@
                 <li class="sub-menu">
                     <a class="active" href="javascript:;" ><i class="icon-user"></i><span>用户管理</span></a>
                     <ul class="sub">
+                        <% if (user.role == 1) { %>
                         <li><a href="javascript:;" onclick="loadMainPage('pages/user/admin.html')">管理员管理</a></li>
+                        <% } %>
                         <li><a href="javascript:;" onclick="loadMainPage('pages/user/user.html')">客户管理</a></li>
                     </ul>
                 </li>
@@ -146,7 +148,8 @@
 <script src="js/owl.carousel.js" ></script>
 <script src="js/jquery.customSelect.min.js" ></script>
 <script src="js/respond.min.js" ></script>
-<script src="assets/advanced-datatable/media/js/jquery.dataTables.min.js"></script>
+<script src="assets/data-tables/jquery.datatables.min.js"></script>
+<script src="assets/data-tables/DT_bootstrap.js"></script>
 <script src="js/jquery.dcjqaccordion.2.7.js"></script>
 <script src="js/common.js"></script>
 <script src="js/jquery.tmpl.min.js"></script>
@@ -183,6 +186,8 @@
         uid: '570e5091a32ab6a1dad90ead',
         credit: 36000
     };
+
+    loadMainPage('pages/user/admin.html');
 </script>
 </body>
 </html>
