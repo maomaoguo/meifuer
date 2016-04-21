@@ -193,6 +193,15 @@
 <script type="text/javascript" src="assets/bootstrap-fileupload/bootstrap-fileupload.js"></script>
 
 <script type="text/javascript">
+    var user = {}; //全局变量，用于存放当前用户信息
+    '<% if(user){ %>'
+    user.uid = '<%= user._id%>';
+        '<% if(user.credit){ %>'
+        user.credit = '<%= user.credit%>';
+        '<% }else{ %>'
+        user.credit = 0;
+        '<% } %>'
+    '<% } %>'
     function loadMainPage(v) {
         $('#main-content').load(v);
     }

@@ -2734,9 +2734,7 @@ ul.amounts li {
 
 .dataTables_paginate.paging_bootstrap.pagination {
     float: right;
-    margin-right: 15px;
-    margin-top: -5px;
-    margin-bottom: 15px;
+    margin-top: 0;
 
 }
 
@@ -4196,7 +4194,7 @@ td.details table tr td, .dataTable tr:last-child {
 }
 
 .adv-table .dataTables_info, .dataTables_paginate {
-    padding: 15px;
+    padding: 10px 0 0 15px;
 }
 
 .adv-table .dataTables_length,.adv-table .dataTables_filter {
