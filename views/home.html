@@ -449,6 +449,7 @@
 		 * 留言前校验是否登录
 		 */
 		 function checkLogin(){
+		 	var user = "<%= user%>";
 		 	if (typeof(user) == 'undefined') {
 	            yeshidenotify('error', 'top right', '请先登录', '提示将在2秒内关闭', 2000);
 	            $('#login-modal').modal('show');
@@ -466,7 +467,7 @@
 		 		yeshidenotify('error', 'top right', '您的留言信息为空哟～', '提示将在2秒内关闭', 2000);
 		 		return;
 		 	}
-		 	$.post("/api/messages",{name:user.name,message:message},function(res){
+		 	$.post("/api/messages",{name: "<%= user.name%>", message: message},function(res){
 				if(res.code == -1){
 					yeshidenotify('error', 'top right', '留言提交失败，请稍等再试', '提示将在2秒内关闭', 2000);
 				}else{
