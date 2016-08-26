@@ -1,57 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-</head>
-<body>
-	<section class="wrapper">
-		<!-- page start-->
-        <section class="panel">
-            <!-- <header class="panel-heading">最近新款</header> -->
-            <div class="panel-body">
-            	<div class="row product-list">
-                    <div class="col-md-3">
-                        <section class="panel">
-                            <div class="pro-img-box">
-                                <img alt="" src="img/product-list/pro-1.jpg">
-                                <a class="adtocart" href="javascript:;" onclick="info();"> <i class="icon-picture"></i></a>
+			<body>
+			<!-- jsRender 渲染 -->
+			<script id="product-template" type="text/x-jquery-tmpl">
+					<div class="product-list">
+						<div class="col-md-4" style="float:left">
+							<section class="panel">
+								<div class="pro-img-box" >
+										<img alt="" src="{{:value[0].href}}" style="height: 369px;">
+										<a class="adtocart" href="javascript:;" onclick="showData(this);" >
+											<i class="icon-picture"></i>
+										</a>
+								</div>
+							</section>
+							<h3 style="text-align:center">{{: title}}</h3>
+						</div>
+					</div>
+			</script>
+            <section class="wrapper">
+                <section class="panel">
+                    <div class="panel-body">
+                        <div class="row product-list">
+                            <div id="temp-list" >
                             </div>
-                        </section>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- page end-->
-    </section>
-</body>
+                </section>
+            </section>
+    </body>
 <script type="text/javascript">
-	$(function() {
-		//    fancybox
-		//jQuery(".fancybox").fancybox();
-		
-	});
-		
-	function info(){
-		$.fancybox.open([
-				        	{href : 'img/gallery/1.jpg'},
-				        	{href : 'img/gallery/2.jpg'},
-				        	{href : 'img/gallery/3.jpg'},
-				        	{href : 'img/gallery/4.jpg'},
-				        	{href : 'img/gallery/5.jpg'}
-				        ],{
-				    		prevEffect	: 'none',
-				    		nextEffect	: 'none',
-				    		helpers	: {
-				    			thumbs	: {
-				    				width	: 50,
-				    				height	: 50,/* 
-				    				source : function( item ) {
-				                        return item.href;
-				                    }, */
-					    			position: 'bottom'
-				    			}
-				    		}
-				    	});
+$(function() {
+   	show();
+
+});
+
+var imgData;
+function show(e) {
+    $.getJSON('api/products/list/list', function(msg) {
+        if (msg.code == 1) {
+			var data = msg.result;
+			for(var i=0; i<data.length; i++){
+				var template = $.templates("#product-template");
+				var htmlOutput = template.render(data[i]);
+				$("#temp-list").append(htmlOutput);
+			}
+			imgData = data;
+//			showData(data);
+        }
+
+    });
+}
+function showData(v){
+	var data = [];
+	var src = $(v).parent('div').find('img').attr('src');
+	for(var i=0; i<imgData.length; i++) {
+		var tempStr = imgData[i].name.substring(21,imgData[i].name.length-1);
+		if(src.search(tempStr) != -1) {
+			data = imgData[i].value;
+			break;
+		}
 	}
+	$.fancybox.open(data,{
+		prevEffect	: 'none',
+		nextEffect	: 'none',
+		helpers	: {
+			thumbs	: {
+				width	: 50,
+				height	: 50,
+				position: 'bottom'
+			}
+		}
+	});
+}
 </script>
 </html>

@@ -116,7 +116,7 @@ router.route('/')
         }
         if (!start_at) {
             rm.errorMsg('未获取到活动开始时间！');
-            res.send(restmsg);
+            res.send(rm);
             return;
         }
         if (!end_at) {
@@ -142,11 +142,11 @@ router.route('/')
                     var aid = bo._id;
 
                     //图片保存路径，若不存在则先创建
-                    if (!fs.existsSync('../public/img/present')) {
-                        fs.mkdirSync('../public/img/present');
+                    if (!fs.existsSync('./public/img/present')) {
+                        fs.mkdirSync('./public/img/present');
                     }
-                    if (!fs.existsSync('../public/img/present/' + aid)) {
-                        fs.mkdirSync('../public/img/present/' + aid);
+                    if (!fs.existsSync('./public/img/present/' + aid)) {
+                        fs.mkdirSync('./public/img/present/' + aid);
                     }
 
                     var files = req.files['present-img'];
@@ -182,7 +182,7 @@ router.route('/')
                             }
 
                             //重命名图片
-                            var newName = '../public/img/present/' + aid + '/' + no + '.' + files[i].extension;
+                            var newName = './public/img/present/' + aid + '/' + no + '.' + files[i].extension;
                             fs.renameSync(files[i].path, newName, function(err) {
                                 if (err) {
                                     console.log(err);
@@ -211,7 +211,7 @@ router.route('/')
                         }
 
                         //重命名图片
-                        var newName = '../public/img/present/' + aid + '/' + no + '.' + files.extension;
+                        var newName = './public/img/present/' + aid + '/' + no + '.' + files.extension;
                         fs.renameSync(files.path, newName, function(err) {
                             if (err) {
                                 console.log(err);
@@ -233,9 +233,9 @@ router.route('/')
                                     res.send(rm);
                                     return;
                                 }
-                                var files = fs.readdirSync('../public/img/present/' + aid);
+                                var files = fs.readdirSync('./public/img/present/' + aid);
                                 files.forEach(function(file, index) {
-                                    var curPath = '../public/img/present/' + aid + "/" + file;
+                                    var curPath = './public/img/present/' + aid + "/" + file;
                                     fs.unlinkSync(curPath);
                                 })
                             });
@@ -307,8 +307,8 @@ router.route('/:aid')
                         good.url = 'img/present/' + aid + '/' + good.no + '.' + file.extension;
 
                         //处理图片
-                        fs.unlinkSync('../public/' + good.preUrl);
-                        var newName = '../public/' + good.url;
+                        fs.unlinkSync('./public/' + good.preUrl);
+                        var newName = './public/' + good.url;
                         fs.renameSync(file.path, newName, function(err) {
                             if (err) {
                                 console.log(err);
@@ -331,7 +331,7 @@ router.route('/:aid')
                     good.url = 'img/present/' + aid + '/' + no + '.' + file.extension;
 
                     //处理图片
-                    var newName = '../public/' + good.url;
+                    var newName = './public/' + good.url;
                     fs.renameSync(file.path, newName, function(err) {
                         if (err) {
                             console.log(err);

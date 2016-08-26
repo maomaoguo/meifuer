@@ -3,10 +3,9 @@
 /.settings
 /.idea
 /db/db.js
+/db/pool.js
 /node_modules
-/public/img/present
-/uploads
-
+#/service/common/thriftsql
 # Logs
 logs
 *.log

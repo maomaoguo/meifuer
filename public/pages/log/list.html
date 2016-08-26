@@ -5,7 +5,7 @@
                 <header class="panel-heading">
                     <form class="form-inline" role="form">
                         <div class="form-group">
-                            <input type="text" id="q-name" class="form-control" placeholder="操作人">
+                            <input type="text" id="q-name" class="form-control" placeholder="公司名称">
                         </div>
                         <button type="button" class="btn btn-info" onclick="initTable()">查询</button>
                         <button type="reset" class="btn btn-warning">重置</button>
@@ -16,13 +16,10 @@
                         <table id="logs-table" class="display table table-bordered table-striped">
                             <thead>
                             <tr>
-                                <th style="text-align: center;">操作人</th>
-                                <th style="text-align: center;">被操作人</th>
+                                <th style="text-align: center;">公司名称</th>
                                 <th style="text-align: center;">类型</th>
                                 <th style="text-align: center;">积分</th>
                                 <th style="text-align: center;">描述</th>
-                                <th style="text-align: center;">日期</th>
-                                <th style="text-align: center;">操作</th>
                             </tr>
                             </thead>
                             <tbody></tbody>
@@ -58,25 +55,15 @@
             'bLengthChange': false,
             'bAutoWidth': false,
             'bSort': false,
-            'aoColumns': [{
-                'mData': 'name'
-            }, {
-                'mData': 'customer_name'
-            }, {
+            'aoColumns': [ {
                 'mData': 'cname'
             }, {
-                'mData': 'type'
+                'mData': 'type',
+                'mRender': typeRender
             }, {
                 'mData': 'credit'
             }, {
                 'mData': 'desc'
-            },{
-                'mData': 'create_at'
-            }, {
-                'mData': 'id',
-                'fnCreatedCell': function(nTd) {
-                    $(nTd).css('text-align', 'center');
-                }
             }],
             "oLanguage" : {
                 "sUrl" : "conf/de_DE.txt"
@@ -115,5 +102,25 @@
                 yeshidenotify('error', 'top right', '查询失败！', '提示将在2秒内关闭', 2000);
             }
         });
+    }
+
+    function typeRender(data, type, row) {
+        switch (data) {
+            case 1:
+                return '客户积分赚取';
+                break;
+            case 2:
+                return '客户积分消费';
+                break;
+            case 3:
+                return '客户注册';
+                break;
+            case 4:
+                return '客户删除';
+                break;
+            default:
+                return '--';
+                break;
+        }
     }
 </script>

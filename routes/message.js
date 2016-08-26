@@ -89,6 +89,7 @@ router.route('/')
             });
         });
     })
+
     .post(function (req, res, next) {
         var rm = new RestMsg();
         if (!req.session.name) {

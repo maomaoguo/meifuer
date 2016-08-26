@@ -18,7 +18,7 @@ _privateFun.prsBO2VO = function (obj) {
         transform: function (doc, ret, options) {
             return {
                 id: ret.op_id,//操作人id
-                name: ret.name,//操作人名字
+                name: ret.op_name,//操作人名字
                 cid: ret.oped_id,//被操作人id
                 cname: ret.oped_name,//被操作人名字
                 type: ret.type,
@@ -42,7 +42,7 @@ router.route('/')
         var query = {};
         var name = req.param('name');
         if (name) {
-            query.name = new RegExp(name, 'i'); //不区分大小写模糊查询
+            query.oped_name = new RegExp(name, 'i'); //不区分大小写模糊查询
         }
 
         var options = {'$slice': 2};

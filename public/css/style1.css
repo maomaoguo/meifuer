@@ -6,7 +6,6 @@ Website: http://thevectorlab.net/
 */
 
 /* Import fonts */
-@import url(../assets/fonts/googleapis.com.css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic);
 
 body {
     color: #341b0f;
@@ -339,7 +338,7 @@ ul.sidebar-menu li a.active i {
    	position: absolute;
     left: 0;
     right: 0;
-    height£º49px;
+    heightï¿½ï¿½49px;
     z-index: 1002;
 }
 

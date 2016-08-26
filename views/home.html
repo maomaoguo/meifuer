@@ -132,6 +132,7 @@
 	            <div class="item clearfix"style="background:#a9d86e url('img/home_3.jpg') no-repeat 50% 0;">
 	                <h1>美福尔壁纸·壁布</h1>
 	                <p>一流的服务，只为您的舒心</p>
+
 	            </div>
 	        </div>
 	    </div>
@@ -148,7 +149,8 @@
 	                  <ul class="nav navbar-nav">
 	                      <li class="active"><a href="javascript:;" onclick="loadMainPage('pages/home.html');"><i class="icon-home"></i>首页</a></li>
 	                      <li><a href="javascript:;" onclick="loadMainPage('pages/near.html');"><i class="icon-leaf"></i>产品展示</a></li>
-						  <li><a href="javascript:;" onclick="loadMainPage('pages/about.html');"><i class="icon-group"></i>关于我们</a></li>
+						  <li><a href="javascript:;" onclick="loadMainPage('pages/condition.html');"><i class="icon-leaf"></i>加盟条件</a></li>
+						  <li><a href="javascript:;" onclick="loadMainPage('pages/about.html');"><i class="icon-group"></i>联系我们</a></li>
 						  <% if (user) { %>
 	                      <li><a href="javascript:;" onclick="loadMainPage('pages/credit.html')"><i class="icon-male"></i>积分换购</a></li>
 						  <% } %>
@@ -203,14 +205,10 @@
   </section>
 
   <!-- 右侧悬浮框————留言 -->
-  <div class="float-area" style="bottom: 65px;" title="留言">
+  <div class="float-area" style="bottom: 65px;" title="QQ">
     <div class="activity">
-      <a onclick="checkLogin()">
-        <span style="border-radius: 0;background-color: #FFF;color:#999;font-size:25px;">
-          <i class="icon-envelope"></i>
-        </span>
-      </a>
-    </div>
+		<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin=506475853&site=qq&menu=yes"><img border="0" src="http://wpa.qq.com/pa?p=2:506475853:41" alt="点击这里给我发消息" title="点击这里给我发消息"/></a>
+	</div>
   </div>
   <!-- 留言 Modal -->
   <div id="message-modal" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" class="modal fade">
@@ -218,7 +216,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
-          <h4 class="modal-title">留言板</h4>
+          <h4 class="modal-title">板</h4>
         </div>
         <div class="modal-body">
           <form role="form">
@@ -322,7 +320,7 @@
 	<script src="assets/fancybox/source/jquery.fancybox.pack.js"></script>
 	<script src="assets/fancybox/source/helpers/jquery.fancybox-thumbs.js"></script>
     <script src="js/jquery.dcjqaccordion.2.7.js"></script>
-	<script src="assets/advanced-datatable/media/js/jquery.datatables.min.js"></script>
+	<script src="assets/advanced-datatable/media/js/jquery.dataTables.min.js"></script>
 	<script src="assets/advanced-datatable/media/js/DT_bootstrap.js"></script>
 	<script src="assets/JsRender/jsrender.min.js"></script>
 	<script src="js/moment.min.js"></script>
@@ -465,16 +463,15 @@
 		/**
 		 * 留言前校验是否登录
 		 */
-		 function checkLogin(){
-		 	/*var user = "<%= user%>";
-		 	console.log(user)
-		 	if (user == 'null') {
-	            yeshidenotify('error', 'top right', '请先登录', '提示将在2秒内关闭', 2000);
-	            $('#login-modal').modal('show');
-	        } else {
-	        	$('#message-modal').modal('show');
-	        }*/
-		 }
+		function checkLogin(){
+			/*var user = "<%= user%>";
+			if (!user) {
+				$('#message-modal').modal('show');
+			} else {
+				yeshidenotify('error', 'top right', '请先登录', '提示将在2秒内关闭', 2000);
+				$('#login-modal').modal('show');
+			}*/
+		}
 
 		/**
 		 * 提交留言

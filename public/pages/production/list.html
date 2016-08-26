@@ -1,180 +1,164 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-	<head>
-		<meta charset="utf-8">
-		<title>作品管理--作品维护</title>
-	</head>
+<div class="wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel">
+                <header class="panel-heading" style="padding-top: 15px; border-bottom-width: 0;">
+                    <form class="form-inline" role="form">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="q-name" placeholder="相册名称">
+                        </div>
+                        <button type="button" class="btn btn-info" onclick="initTable()">查询</button>
+                        <button type="reset" class="btn btn-warning">重置</button>
+                        <button type="button" class="btn btn-success pull-right" onclick="loadMainPage('pages/production/new.html')">新增
+                        </button>
+                    </form>
+                </header>
+                <div class="panel-body" style="padding-top: 0;">
+                    <div class="adv-table">
+                        <table id="product-table" class="display table table-bordered table-striped">
+                            <thead>
+                            <tr>
+                                <th>相册名称</th>
+                                <th style="text-align: center;">创建时间</th>
+                                <th style="text-align: center;">描述</th>
+                                <th style="text-align: center;">操作</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-	<body>
-		<script type="text/x-jquery-tmpl" id="product-template">
-			<div class="col-md-3">
-				<section class="panel" style="background-color: #f1f2f7">
-					<div class="pro-img-box">
-						<img src="img/product-list/pro-1.jpg"/>
-					</div>
-					<div class="panel-body text-center">
-						<button id="{{= pid}}" class="btn btn-sm btn-info" type="button" onclick="show(this);">
-							<i class="icon-list-ul"></i> 查看
-						</button>
-						<button id="{{= pid}}" class="btn btn-sm btn-warning" type="button" onclick="edit(this);">
-							<i class="icon-pencil"></i> 编辑
-						</button>
-						<button id="{{= pid}}" class="btn btn-sm btn-danger" type="button" onclick="del(this);">
-							<i class="icon-trash"></i> 删除
-						</button>
-					</div>
-				</section>
-			</div>
-		</script>
-	
-		<section class="wrapper">
-			<div class="row">
-				<div class="col-md-12">
-					<section class="panel">
-						<header class="panel-heading tab-bg-dark-navy-blue">
-							<ul class="nav nav-tabs">
-								<li class="active">
-									<a id="boy" href="#" data-toggle="tab">男装</a>
-								</li>
-								<li class="">
-									<a id="girl" href="#" data-toggle="tab">女装</a>
-								</li>
-								<li class="">
-									<a id="tatoon" href="#" data-toggle="tab">图案</a>
-								</li>
-								<li class="">
-									<a id="vip" href="#" data-toggle="tab">会员尊享</a>
-								</li>
-								<li class="">
-									<a id="others" href="#" data-toggle="tab">其他</a>
-								</li>
-							</ul>
-						</header>
-                    	<div class="panel-body">
-							<div id="product-list" class="row product-list"></div>
-                    		<div class="pull-right">
-                    			<ul id="product-pagination" class="pagination pagination-sm pro-page-list"></ul>
-                    		</div>
-                    	</div>
-                    </section>
-				</div>
-			</div>
-		</section>
-		
-		<script type="text/javascript">
-			var level = 1;
-			var type = 1;
-			
-			// 获取分页作品信息
-			function initData(start) {
-				var row = 16;
-				$.getJSON('api/productions', {
-					start: start,
-					row: row,
-					level: level,
-					type: type
-				}, function(rm) {
-					$('#product-list').empty();
-					if (rm.code == 1) {
-						if (rm.result.total == 0) {
-							var html = ''
-								+ '<div class="col-lg-12">'
-								+ 	'<div class="alert alert-info fade in">'
-								+ 		'<button class="close close-sm" type="button" data-dismiss="alert">'
-								+ 			'<i class="icon-remove"></i>'
-								+ 		'</button>'
-								+ 		'未查询到任何数据！'
-								+ 	'</div>'
-								+ '</div>';
-							$(html).appendTo('#product-list');
-						} else{
-							if (!start) {
-		
-								//初始化分页
-								$('#product-pagination').twbsPagination({
-									total: rm.result.total,
-									pageSize: row,
-									totalPages : rm.result.totalPages,
-									startPage: rm.result.page,
-									first : '«',
-									prev : '‹',
-									next : '›',
-									last : '»',
-									onPageClick: function(event, page) {
-										initData(row * (page - 1));
-									}
-								});
-							}
-		
-							//加载作品数据
-							$('#product-template').tmpl(rm.result.data).appendTo('#product-list');
-						}
-					} else {
-						yeshidenotify('error', 'middle center', rm.msg, '提示框将在3秒内关闭', 3000);
-					}
-				});
-			}
-			
-			// 查看按钮点击事件
-			function show(v) {
-				var pid = $(v).attr('id');
-				loadMainPage('pages/production/new.html?pid=' + pid);
-			}
-			
-			// 编辑按钮点击事件
-			function edit(v) {
-				var pid = $(v).attr('id');
-				loadMainPage('pages/production/new.html?pid=' + pid);
-			}
-			
-			// 删除按钮点击事件
-			function del(v) {
-				var pid = $(v).attr('id');
-				nconfirm('cool', 'middle center', '警示！', '确定删除该作品？', function() {
-			    	$.ajax({
-			    		type: 'DELETE',
-			    	    url: 'api/productions/' + pid,
-			    	    success: function(rm) {
-			    	    	if (rm.code == 1) {
-			    	    		yeshidenotify('success', 'middle center', rm.msg, '提示框将在3秒内关闭', 3000);
-			    	    		initData(0);
-			    	    	} else {
-			    	    		yeshidenotify('error', 'middle center', rm.msg, '提示框将在3秒内关闭', 3000);
-			    	    	}
-			    	    }
-			    	});
-				});
-			}
-			
-			initData(0);
-			$(function() {
-				$('#boy').click(function() {
-					level = 1;
-					type = 1;
-					initData(0);
-				});
-				$('#girl').click(function() {
-					level = 1;
-					type = 2;
-					initData(0);
-				});
-				$('#tatoon').click(function() {
-					level = 1;
-					type = 3;
-					initData(0);
-				});
-				$('#vip').click(function() {
-					level = 2;
-					type = '';
-					initData(0);
-				});
-				$('#others').click(function() {
-					level = 1;
-					type = 4;
-					initData(0);
-				});
-				initData(0);
-			});
-		</script>
-	</body>
-</html>
+<script>
+
+    //页面加载完成后执行
+    $(function () {
+        initTable();
+    });
+
+    //初始化table
+    function initTable() {
+        $('#product-table').dataTable().fnDestroy();
+        $('#product-table').dataTable({
+            'bProcessing': false,
+            'bServerSide': true,
+            'sAjaxSource': 'api/products',
+            'fnServerData': retrieveData,
+            'bDestroy': true,
+            'bRetrieve': true,
+            'sAjaxDataProp': 'data',
+            'iDisplayLength': 10,
+            'bFilter': false,
+            'bLengthChange': false,
+            'bAutoWidth': false,
+            'bSort': false,
+            'aoColumns': [{
+                'mData': 'name'
+            }, {
+                'mData': 'create_at',
+                'mRender': dateRender,
+                'fnCreatedCell': function (nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
+            }, {
+                'mData': 'desc'
+            }, {
+                'mData': 'pid',
+                'mRender': descRender,
+                'fnCreatedCell': function (nTd) {
+                    $(nTd).css('text-align', 'center');
+                }
+            }]
+        });
+    }
+
+    //渲染时间列
+    function dateRender(data, type, row) {
+        return moment(data).format('YYYY-MM-DD HH:mm:ss');
+    }
+
+    //渲染操作列
+    function descRender(data, type, row) {
+        var str = '<a id="'+ data + '" onclick="showProduct(this)" align="center" href="javascript:;" data-toggle="tooltip" title="编辑"><i class="icon-edit text-warning"></i></a>&nbsp;&nbsp;'
+                + '<a id="'+ data + '" onclick="deleteProduct(this)" align="center" href="javascript:;" data-toggle="tooltip" title="删除"><i class="icon-trash"></i></a>&nbsp;&nbsp;';
+        return str;
+    }
+
+    //异步获取table数据
+    function retrieveData(sSource, aoData, fnCallback) {
+        var row = 10;
+        var start = 0;
+        $.each(eval(aoData), function (i, field) {
+            if (field.name == 'iDisplayStart') {
+                start = field.value;
+            }
+            if (field.name == 'iDisplayLength') {
+                row = field.value;
+            }
+        });
+
+        var name = $('#q-name').val();
+        $.getJSON(sSource, {
+            start: start,
+            row: row,
+            name: name
+        }, function (rm) {
+            if (rm.code == 1) {
+                var data = rm.result;
+                if (!data.data) {
+                    data.data = [];
+                }
+                data.iTotalRecords = rm.result.total ? rm.result.total : 0;
+                data.iTotalDisplayRecords = rm.result.total ? rm.result.total : 0;
+                fnCallback(data);
+            } else {
+                yeshidenotify('error', 'top right', '查询失败！', '提示将在2秒内关闭', 2000);
+            }
+        });
+    }
+
+    //详情展示
+    function showProduct(v) {
+        var pid = $(v).attr('id');
+        $('#main-content').load('pages/production/new.html', function () {
+            $.getJSON('api/products/' + pid, function (rm) {
+                if (rm.code == 1) {
+                    $('.panel-heading').text('编辑产品');
+                    var product = rm.result;
+                    $('#pid').val(product._id);
+                    $('#name').val(product.name);
+                    $('#desc').val(product.desc);
+                    var goods = product.imgs;
+                    var productTemplate = $.templates('#product-template');
+                    var htmlOutput = productTemplate.render(goods);
+                    $('#products .present').remove();
+                    $('#products').prepend(htmlOutput);
+                } else {
+                    yeshidenotify('error', 'top right', '详情获取失败！', '提示将在2秒内关闭', 2000);
+                }
+            });
+        });
+    }
+    //删除（物理删除）
+    function deleteProduct(v){
+       var pid = $(v).attr('id');
+        $.ajax({
+            url: 'api/products/'+pid,
+            type: 'delete',
+            data:{},
+            success: function(rm) {
+                if(rm.code == 1){
+                    initTable();
+                    yeshidenotify('success', 'top right', '删除成功！', '提示将在2秒内关闭', 2000);
+                }else {
+                    yeshidenotify('error', 'top right', '删除失败！', '提示将在2秒内关闭', 2000);
+                }
+            }
+        });
+
+    }
+</script>

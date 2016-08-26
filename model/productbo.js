@@ -6,8 +6,9 @@ var mongoose = require('../db/db');
 var productSchema = mongoose.Schema({
     "name":String,//系列名称
     "num": Number,//系列中的作品数
-    "url":String,//封面图片路径
-    "creat_at":Date//<时间>
+    "desc":String,//描述
+    "create_at":Date,//<时间>
+    "imgs":Array,//图片
 },{versionKey:false});
 
 var product = mongoose.model('products', productSchema,'products');
